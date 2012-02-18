@@ -16,7 +16,7 @@ class TrackedBlob {
 
 	public : 
 	TrackedBlob() ;
-	void update(ofColor col, int gapNumFrames, int numbits, vector<ofPoint *> * otherPoints = NULL) ; 
+	void update(int col, int gapNumFrames, int numbits, vector<ofPoint *> * otherPoints = NULL) ; 
 	void reset() ; 
 	void draw(float bwthreshold) ; 
 	int getID(float threshold = 0.5); 
@@ -38,7 +38,7 @@ class TrackedBlob {
 	int numBits; 
 
 	ofColor colour; 
-	vector<ofColor> colours; 
+	vector<int> colours; 
 	vector<float> greys; 
 
 

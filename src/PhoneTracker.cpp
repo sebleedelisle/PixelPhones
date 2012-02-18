@@ -158,19 +158,28 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 					
 					// now we update all the tracked blobs
 					vector<ofPoint *> labelPoints;
-					vidPix = cvGreyPrevious.getPixels(); 
+					//vidPix = cvGreyPrevious.getPixels(); 
 					for(int i=0; i<trackedBlobs.size(); i++) { 
 						
 						TrackedBlob * tb = trackedBlobs[i];
 						if(!tb->enabled) continue; 
 						
 						// figure out the pixel index of the centre of the blob
-						int index = (((int)tb->centroid.y*vidWidth) + (int)tb->centroid.x);// *3;  
+						int index = flipY ? (vidHeight - (int)tb->centroid.y) : (int)tb->centroid.y *vidWidth;
+						index += flipX ? (vidWidth-(int)tb->centroid.x) : (int)tb->centroid.x;
+						index*=3; 
+									 
+						
+						
 						
 						// and pull out the colour
-						ofColor col;
+						//ofColor col;
 						//col.set(vidPix[index], vidPix[index+1], vidPix[index+2], 255);
-						col.set(vidPix[index], vidPix[index], vidPix[index], 255);
+						//col.set(vidPix[index], vidPix[index], vidPix[index], 255);
+						
+						int col = vidPix[index] + vidPix[index+1] + vidPix[index+2];
+						
+						
 						
 						// pass it into our tracked blob function. 10 - numbits 
 						tb->update(col, gapNumFrames, numBits, &labelPoints); 
@@ -215,9 +224,9 @@ void PhoneTracker :: draw() {
 	
 		// draw all the blobs! 
 		//for (int i = 0; i < contourFinder.nBlobs; i++){
-		//        contourFinder.blobs[i].draw(0,0);
-		//		
-		//    }
+//			contourFinder.blobs[i].draw(0,0);
+//			
+//		}
 	
 		for(int i=0; i<trackedBlobs.size(); i++) { 
 			trackedBlobs[i]->draw(bwthreshold);

@@ -18,16 +18,14 @@ TrackedBlob::TrackedBlob() {
 	blackGaps = true; 
 	
 }
-void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, vector<ofPoint *> * otherPoints) {
+void TrackedBlob::update(int col, int gapNumFrames, int numbits, vector<ofPoint *> * otherPoints) {
 	if(!enabled) return; 
 	lifeExpectancy = gapNumFrames; 
 	numBits = numbits; 
 	counter ++; 
 	
 	if(counter-lastUpdated>lifeExpectancy) enabled = false; 
-	else {
-		colours.push_back(col); 
-	}
+	else colours.push_back(col); 
 	
 	labelCentre.set(centroid);
 	
@@ -57,27 +55,43 @@ void TrackedBlob::draw(float bwthreshold) {
 	ofSetColor(colour);
 	
 	ofRect(boundingRect); 
-	ofSetLineWidth(1);
+	
+	if(colours.size()<lifeExpectancy*2) return; 
+	
+	//ofSetLineWidth(1);
 	//ofRect( centroid.x-1,  centroid.y-1,3,3);
 	
-	ofLine(centroid.x, centroid.y, labelCentre.x, labelCentre.y);
+	//ofLine(centroid.x, centroid.y, labelCentre.x, labelCentre.y);
 	
 	ofFill();
 	
-	ofColor col; 
+	//ofColor col; 
 	
-	//updateGreys(); 
+	updateGreys(); 
+//	
+//	for(int i=0; i<greys.size(); i++) {
+//		
+//		col.set(greys[i]<bwthreshold ? 0 : 255 ); 
+//		
+//		ofSetColor(col); 
+//		
+//		ofRect(labelCentre.x+(i*1), labelCentre.y, 1, 1);
+//		//ofVertex(labelCentre.x+(i*1),labelCentre.y);
+//		
+//	}
 	
 	for(int i=0; i<greys.size(); i++) {
 		
-		col.set(greys[i]<bwthreshold ? 0 : 255 ); 
+		//col.set(greys[i]<bwthreshold ? 0 : 255 ); 
 		
-		ofSetColor(col); 
+		ofSetColor(greys[i]*255); 
 		
 		ofRect(labelCentre.x+(i*1), labelCentre.y, 1, 1);
 		//ofVertex(labelCentre.x+(i*1),labelCentre.y);
 		
 	}
+	
+	
 	
 }
 void TrackedBlob::reset() {
@@ -97,10 +111,12 @@ void TrackedBlob::updateGreys() {
 	
 	//vector <float> brightnesses; 
 	
-	float minBrightness = 1, maxBrightness = 0; 
+	int minBrightness = 255*3, 
+		maxBrightness = 0; 
+	
 	for (int i = 0; i<colours.size(); i++) {
 		
-		float brightness = colours[i].getLightness(); 
+		int brightness = colours[i]; 
 		
 		if(brightness<minBrightness) minBrightness = brightness; 
 		if(brightness>maxBrightness) maxBrightness = brightness; 
@@ -117,7 +133,7 @@ void TrackedBlob::updateGreys() {
 		//normalise the brightness
 		greys[i] = (greys[i] - minBrightness) /( maxBrightness - minBrightness) ; 
 		
-		//cout << brightnesses[i] << " ";
+		//cout << greys[i] << " ";
 		
 	}
 	//cout << "\n\n";
