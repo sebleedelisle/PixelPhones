@@ -1,0 +1,10 @@
+In file included from /Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/StripesEffect.h:11,
+                 from /Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/StripesEffect.cpp:10:
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/OutputEffect.h: In member function 'virtual void OutputEffect::start()':
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/OutputEffect.h:36: error: 'started' was not declared in this scope
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/OutputEffect.h: In member function 'virtual void OutputEffect::stop()':
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/OutputEffect.h:39: error: 'started' was not declared in this scope
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/StripesEffect.cpp: At global scope:
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/StripesEffect.cpp:13: error: no 'void StripesEffect::update()' member function declared in class 'StripesEffect'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/StripesEffect.cpp: In member function 'void StripesEffect::update()':
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones05/src/StripesEffect.cpp:15: error: 'started' was not declared in this scope
