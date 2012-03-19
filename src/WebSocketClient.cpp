@@ -16,7 +16,6 @@ WebSocketClient::WebSocketClient() {
 
 void WebSocketClient::setup(int id, ofxTCPClient * client) { 
 	
-	cout << "setup \n";
 	tcpClient =  client; 
 	handShaked = false; 
 	
@@ -42,7 +41,7 @@ void WebSocketClient::update() {
 	if( receiveString.length()>0){
 		
 		if (!handShaked) {
-			cout << "header : \n" << receiveString << "\n";
+		//	cout << "header : \n" << receiveString << "\n";
 		
 			// this is a flash socket pretending to be a websocket :) 
 			if(receiveString.find("<policy-file-request/>")!=string::npos) {
@@ -63,7 +62,7 @@ void WebSocketClient::update() {
 					tcpClient->sendRaw(ofToString((char)0xff)); 
 					
 					//ofToString((char)0) + msg + ofToString((char)0xff)
-					cout << "sending handshake : \n"<<response<< "\n";
+					//cout << "sending handshake : \n"<<response<< "\n";
 				}
 			}
 		} 
@@ -88,10 +87,10 @@ string WebSocketClient::procClientHeader(string header, int port){
 	for (int i = 0 ; i<data.size(); i++) {
 		string str = data[i]; 
 		if(str.find("Sec-WebSocket-Key1:")!=string::npos){
-			cout << "key1 uncoded : " << str.substr(20) <<"\n"; 
+			//cout << "key1 uncoded : " << str.substr(20) <<"\n"; 
 			key1 = getKeyValue(str.substr(20)); 
 		} else if(str.find("Sec-WebSocket-Key2:")!=string::npos){
-			cout << "key2 uncoded : "<< str.substr(20) <<"\n"; 
+			//cout << "key2 uncoded : "<< str.substr(20) <<"\n"; 
 
 			key2 = getKeyValue(str.substr(20)); 
 			if( i+1 < data.size() ) {
@@ -149,7 +148,7 @@ string WebSocketClient::procClientHeader(string header, int port){
 
 
 long WebSocketClient:: getKeyValue(string str) { 
-	cout << "getting key Value for "<< str<<"\n";
+	//cout << "getting key Value for "<< str<<"\n";
 	trim(&str); 
 	string numstring = "";
 	
@@ -167,8 +166,8 @@ long WebSocketClient:: getKeyValue(string str) {
 	
 	unsigned long num = (unsigned long)atoll(&numstring[0]); 
 	
-	cout << "numstring : "<< numstring << " num : " << num << "\n";
-	cout << num << " " << spacecount << " " << (num/spacecount)<< "\n";
+	//cout << "numstring : "<< numstring << " num : " << num << "\n";
+	//cout << num << " " << spacecount << " " << (num/spacecount)<< "\n";
 	
 	return (unsigned long)(num/spacecount); 
 	

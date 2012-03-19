@@ -1,0 +1,2 @@
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraManager.cpp: In member function 'void CameraManager::close()':
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraManager.cpp:62: error: 'class CameraWrapper' has no member named 'close'

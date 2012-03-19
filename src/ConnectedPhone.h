@@ -19,9 +19,10 @@
 class ConnectedPhone  {
 	
 	public : 
+	ConnectedPhone(ofFbo * labelFbo);
 	void setup(WebSocketClient * webclient, int id);
 	void update(); 
-	void draw(int brightness); 
+	void draw(int brightness, int vidWidth, int vidHeight); 
 	
 	void sendColour(ofColor col, int latency = 0, float fadeUp = 0, float fadeDown = 0) ;
 	void sendFrameRate(int framerate); 
@@ -51,7 +52,7 @@ class ConnectedPhone  {
 	
 	bool found; 
 	bool connectionReady; 
-	ofVec2f pixelPosition;
+	//ofVec2f pixelPosition;
 	ofVec2f unitPosition;
 	int ID; 
 	
@@ -66,6 +67,10 @@ class ConnectedPhone  {
 	ofColor currentColour; 
 	
 	ofTrueTypeFont* labelFont; 
+	ofImage labelImage; 
+	
+	ofFbo* labelFbo; 
+	
 	
 	
 };

@@ -17,16 +17,16 @@ class OutputEffect {
 	public : 
 	OutputEffect(int w, int h) {
 		
-		fbo.allocate(w, h, GL_RGB, 0);
+		//fbo.allocate(w, h, GL_RGB, 0);
 		
 		frame = 0; 
 		width = w; 
 		height = h;
 		fadeUp = fadeDown = 0; 
 		drawFBOToPhones = true;
-		fbo.begin();
-		ofClear(0, 0, 0, 0);
-		fbo.end();
+		//fbo.begin();
+		//ofClear(0, 0, 0, 0);
+		//fbo.end();
 				
 		started = false; 
 	}
@@ -42,7 +42,7 @@ class OutputEffect {
 	
 	
 	
-	ofFbo		fbo;	
+	ofFbo*		fbo;	
 	ofPixels	pixels ; 
 	int			frame; 
 	int			width; 

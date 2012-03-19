@@ -23,7 +23,7 @@ class RainbowEffect : public OutputEffect {
 		
 		if(!started) return; 
 		
-		fbo.begin(); 
+		fbo->begin(); 
 		
 		ofColor col; 
 		
@@ -36,7 +36,7 @@ class RainbowEffect : public OutputEffect {
 			ofRect(i, 0, i+10, height); 
 		}
 		
-		fbo.end(); 
+		fbo->end(); 
 		
 		
 	}

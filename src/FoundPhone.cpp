@@ -9,10 +9,10 @@
 #include "FoundPhone.h"
 
 
-FoundPhone::FoundPhone(int phoneid, float x, float y) {
-	position.set(x, y);
+FoundPhone::FoundPhone(int phoneid, TrackedBlobData* data) {
+	unitPosition.set(data->unitPosition);
 	ID = phoneid; 
-	cout << "FoundPhone::FoundPhone " << ID << " " << x << " " << y << " " << position.x << " " << position.y << "\n";
+	//cout << "FoundPhone::FoundPhone " << ID << " " << unitPosition.x << " " << unitPosition.y << "\n";
 	
 	
 }

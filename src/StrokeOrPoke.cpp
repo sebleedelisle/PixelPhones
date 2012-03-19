@@ -100,7 +100,7 @@ void StrokeOrPoke :: draw() {
 	currentStrokeRating += ((targetStroke - currentStrokeRating)* ((targetStroke>currentStrokeRating)? 0.5 : 0.01)); 
 	currentPokeRating+= ((targetPoke - currentPokeRating)* ((targetPoke>currentPokeRating)? 0.5 : 0.01));
 	
-	fbo.begin(); 
+	fbo->begin(); 
 	ofClear(0, 0, 0, 0);
 	ofFill(); 
 	ofSetColor(255, 0, 0);
@@ -111,7 +111,7 @@ void StrokeOrPoke :: draw() {
 	
 	
 	
-	fbo.end();
+	fbo->end();
 	
 	
 	if(notifyTopStrokerFlag) { 

@@ -13,13 +13,16 @@
 PhoneRenderer:: PhoneRenderer() { 
 	
 	frameRate = 30; 
+	int w = 320; 
+	int h = 240; 
+	currentProgramFbo.allocate(w, h, GL_RGB, 0);
 	
-	outputPrograms.push_back(new RainbowEffect(320,240)); 
+	outputPrograms.push_back(new RainbowEffect(w,h)); 
 	//
-	outputPrograms.push_back(stripesEffect = new StripesEffect(320,240)); 
-	outputPrograms.push_back(pacmanEffect = new PacmanEffect(320,240)); 
+	outputPrograms.push_back(stripesEffect = new StripesEffect(w,h)); 
+	outputPrograms.push_back(pacmanEffect = new PacmanEffect(w,h)); 
 	outputPrograms.push_back(nyanCatch = new NyanCatch()); 
-	outputPrograms.push_back(particleWoosh = new ParticleWoosh(320,240)); 
+	outputPrograms.push_back(particleWoosh = new ParticleWoosh(w,h)); 
 	
 	
 
@@ -79,7 +82,7 @@ void PhoneRenderer::update() {
 	
 		currentProgram->update(); 
 		
-		if(currentProgram->drawFBOToPhones) updatePhonesWithFBO(&(currentProgram->fbo)); 
+		if(currentProgram->drawFBOToPhones) updatePhonesWithFBO(&currentProgramFbo); 
 		
 		lastUpdateTime = time; 
 	
@@ -187,7 +190,7 @@ void PhoneRenderer :: changeProgram(int programnum) {
 	if(currentProgramIndex>=0 ) {
 		currentProgram = outputPrograms[currentProgramIndex];
 		
-		currentProgramFbo = currentProgram->fbo; 
+		currentProgram->fbo = &currentProgramFbo; 
 		if(currentProgram->started) currentProgram->stop();
 		
 		

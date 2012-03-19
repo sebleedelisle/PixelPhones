@@ -1,0 +1,15 @@
+In file included from /Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.h:13,
+                 from /Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:10:
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraWrapper.h:16: error: 'string' has not been declared
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraWrapper.h:19: error: 'ofPixelsRef' does not name a type
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraWrapper.h:23: error: 'string' does not name a type
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:12: error: variable or field 'setup' declared void
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:12: error: 'string' was not declared in this scope
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:12: error: expected primary-expression before 'int'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:12: error: expected primary-expression before 'int'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:12: error: expected primary-expression before 'int'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:16: error: no 'bool CameraVidGrabber::update()' member function declared in class 'CameraVidGrabber'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:21: error: 'ofPixelsRef' does not name a type
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:25: error: no 'int CameraVidGrabber::getWidth()' member function declared in class 'CameraVidGrabber'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:28: error: no 'int CameraVidGrabber::getHeight()' member function declared in class 'CameraVidGrabber'
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/CameraVidGrabber.cpp:31: error: no 'bool CameraVidGrabber::videoSettings()' member function declared in class 'CameraVidGrabber'

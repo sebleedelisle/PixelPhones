@@ -16,47 +16,96 @@ void PhoneTracker::setupCamera(int camwidth, int camheight){
 	numBits = 4;
 	trackDistance = 4; 
 	
-	vidGrabber.close(); 
+//#ifdef USE_LIBDC
+//	libdcCamera.setBayerMode(DC1394_COLOR_FILTER_GBRG);
+//	libdcCamera.setup();
+//	//vidGrabber.close(); 
+//	vidScale = 4; 
+//	vidWidth = camwidth = 1024; 
+//	vidHeight = camheight = 768; 
+//	
+//	
+//#else
+//	//vidGrabber.close(); 
+//	vidScale = 2; 
+//	camwidth = 640; 
+//	camheight = 480; 
+//	
+//	vidGrabber.initGrabber(camwidth, camheight);
+//	vidGrabber.setDesiredFrameRate(60);
+//	
+//	vidWidth = vidGrabber.getWidth(); 
+//	vidHeight = vidGrabber.getHeight(); 
+//#endif	
+//	
 	
-	vidGrabber.setDesiredFrameRate(60);
-	vidGrabber.initGrabber(camwidth, camwidth);
+	//cout << "vidWidth " << vidWidth << " vidHeight " << vidHeight << "\n bwthreshold : " << bwthreshold << "\n";
 	
-	vidWidth = vidGrabber.getWidth(); 
-	vidHeight = vidGrabber.getHeight(); 
 	
-	cout << vidWidth << " " << vidHeight << "\n bwthreshold : " << bwthreshold << "\n";
+	cameraManager.init(); 
+	vidWidth = cameraManager.getWidth(); 
+	vidHeight = cameraManager.getHeight(); 
+	
+	cvWidth = 320; 
+	cvHeight = 240; 
+	
+	vidScale = (float)vidWidth/(float)cvWidth; 
 	
 	vidReset = false; 
 
-	cvColour.allocate(vidWidth,vidHeight); 
-	cvGrey.allocate(vidWidth,vidHeight); 
-	cvGreyPrevious.allocate(vidWidth,vidHeight); 
-	cvDiff.allocate(vidWidth,vidHeight); 
+	
+	cvVideo.allocate(vidWidth, vidHeight); 
+	cvColour.allocate(cvWidth, cvHeight); 
+	cvGrey.allocate(cvWidth, cvHeight); 
+	cvGreyPrevious.allocate(cvWidth, cvHeight); 
+	cvDiff.allocate(cvWidth, cvHeight); 
+	
+	trackingDebugData.allocate(384, 1024, GL_RGB, 0);
+	trackingDebugData.begin(); 
+	ofClear(0, 0, 0, 0); 
+	trackingDebugData.end(); 
+	trackingDebugDataLine = 0; 
 	
 }
 
 
 vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 	
-	broadcasting = isBroadcasting; 
+	
+	
+	if ((!isBroadcasting) && (broadcasting)) {
+		//clear everything... 
+		spareTrackedBlobs.insert(spareTrackedBlobs.end(), trackedBlobs.begin(), trackedBlobs.end());
+		trackedBlobs.clear(); 
+		
+	}
+	broadcasting = isBroadcasting;
+	
 	vector <FoundPhone *> foundPhones; 
+	
+	if(maxBlobSize<minBlobSize) maxBlobSize = minBlobSize;
 	
 	if(updateDiff && !updateVideo) updateVideo = true; 
 	
 	if(updateVideo) {
 		
-		vidGrabber.update();
-	
-		if(maxBlobSize<minBlobSize) maxBlobSize = minBlobSize;
 		int minBlobArea = minBlobSize * minBlobSize ;
 		int maxBlobArea = maxBlobSize * maxBlobSize ;
 		
+		bool newframe = false; 
 		
-		if(vidGrabber.isFrameNew()) {
+		if(cameraManager.update()) {
+			
+			ofPixelsRef vidpix = cameraManager.getPixelsRef();
+						
+			cvVideo.setFromPixels(vidpix);	
+			cvColour.scaleIntoMe(cvVideo);
+			cvColour.mirror(flipY, flipX);			
 			
 			
 			float timeNow = (float)ofGetElapsedTimeMillis(); 
-			videoFrameRate+= ((( 1000.0f / (timeNow - lastVideoFrameMils)) - videoFrameRate) * 0.01) ;
+			int milsbetweenframes = timeNow - lastVideoFrameMils;
+			videoFrameRate+= ((( 1000.0f / (milsbetweenframes)) - videoFrameRate) * 0.01) ;
 			
 			lastVideoFrameMils = timeNow; 
 
@@ -65,11 +114,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 			// trigger. 
 			gapNumFrames = ((float)videoFrameRate / (float)phoneFrameRate)*5;
 
-			unsigned char * vidPix = vidGrabber.getPixels();
-			
-			//ofPixels pix = new ofPixels
-			cvColour.setFromPixels(vidPix, vidWidth, vidHeight);	
-			cvColour.mirror(flipY, flipX);
+			//unsigned char * vidPix = vidGrabber.getPixels();
 			
 
 			if(updateDiff) { 
@@ -85,12 +130,14 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 			
 				
 				if(broadcasting) { 
+					
+					
 					//cout << trackedBlobs.size() << " "<< spareTrackedBlobs.size()<<"\n"; 
 					
 					
 					// find contours which are between the size of minBlobSize and maxBlobSize (in area).
 					// also, find holes is set to true so we will get interior contours as well....
-					contourFinder.findContours(cvDiff, minBlobArea, maxBlobArea, 500, true); 	// find hole
+					contourFinder.findContours(cvDiff, minBlobArea, maxBlobArea, 300, true); 	// find hole
 					
 					//cout << contourFinder.blobs.size() << "\n"; 
 					
@@ -98,14 +145,22 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 					for(int i = 0; i<contourFinder.nBlobs; i++) { 
 						
 						ofxCvBlob * cvBlob = &contourFinder.blobs[i];
-						
+				//		cvBlob->centroid *= vidScale; 
+//						
+//						cvBlob->boundingRect.x *=vidScale; 
+//						cvBlob->boundingRect.y *=vidScale;
+//						cvBlob->boundingRect.width *=vidScale;
+//						cvBlob->boundingRect.height *=vidScale;
+//						
 						// and compare them to all the blobs we're tracking
 						
 						TrackedBlob * trackedBlobHit = NULL; 
 						
-						for(int j=0; j<trackedBlobs.size(); j++) { 
+						list<TrackedBlob*>::iterator it;
+						
+						for(it = trackedBlobs.begin(); it!=trackedBlobs.end(); it++) { 
 							
-							TrackedBlob * trackedBlob = trackedBlobs[j]; 
+							TrackedBlob * trackedBlob = *it; 
 							// ignore old tracked blobs
 							
 							if(!trackedBlob->enabled) continue; 
@@ -123,15 +178,10 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 							// as they may not overlap. 
 							
 							//if(doRectanglesIntersect(&(cvBlob->boundingRect), &(trackedBlob->boundingRect))){
-							if(cvBlob->centroid.distance(trackedBlob->centroid) < trackDistance) {
+							if(cvBlob->centroid.distance(trackedBlob->pixelPosition /vidScale) < trackDistance) {
 							//if(trackedBlob->boundingRect.inside(cvBlob->centroid)) {
 								trackedBlobHit = trackedBlob; 
-								
-								// could probably put this in a method of the trackedBlob. 
-								trackedBlobHit->centroid = cvBlob->centroid; 
-								trackedBlobHit->boundingRect = cvBlob->boundingRect; 				
-								trackedBlobHit->lastUpdated = trackedBlobHit->counter; 
-								
+								trackedBlobHit->updatePosition(cvBlob, cvWidth, cvHeight, vidScale); 
 							}
 						}
 						
@@ -145,66 +195,111 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 								
 							} else {
 								trackedBlobHit = new TrackedBlob(); 
-								trackedBlobs.push_back(trackedBlobHit);
 							}
-							
-							// could probably put this in a method of the trackedBlob. 
-							trackedBlobHit->centroid = cvBlob->centroid; 
-							trackedBlobHit->boundingRect = cvBlob->boundingRect; 				
-							trackedBlobHit->lastUpdated = trackedBlobHit->counter; 
+							trackedBlobs.push_back(trackedBlobHit);
+							trackedBlobHit->updatePosition(cvBlob, cvWidth, cvHeight, vidScale); 
+
 						}
 									
 					}
 					
 					// now we update all the tracked blobs
 					vector<ofPoint *> labelPoints;
-					//vidPix = cvGreyPrevious.getPixels(); 
-					for(int i=0; i<trackedBlobs.size(); i++) { 
+					
+					list<TrackedBlob*>::iterator it = trackedBlobs.begin(); 
+					while(it != trackedBlobs.end()) { 
 						
-						TrackedBlob * tb = trackedBlobs[i];
+						TrackedBlob * tb = *it;
+						
 						if(!tb->enabled) continue; 
 						
+						int cx = (int)(tb->pixelPosition.x);
+						int cy = (int)(tb->pixelPosition.y);
+						
 						// figure out the pixel index of the centre of the blob
-						int index = flipY ? (vidHeight - (int)tb->centroid.y) : (int)tb->centroid.y *vidWidth;
-						index += flipX ? (vidWidth-(int)tb->centroid.x) : (int)tb->centroid.x;
+						int index = (flipY ? (vidHeight - cy) : cy) *vidWidth;
+						index += flipX ? (vidWidth-cx) : cx;
 						index*=3; 
 									 
-						
-						
-						
 						// and pull out the colour
-						//ofColor col;
-						//col.set(vidPix[index], vidPix[index+1], vidPix[index+2], 255);
+						ofColor col;
+						col.set(vidpix[index], vidpix[index+1], vidpix[index+2], 255);
 						//col.set(vidPix[index], vidPix[index], vidPix[index], 255);
 						
-						int col = vidPix[index] + vidPix[index+1] + vidPix[index+2];
-						
-						
-						
-						// pass it into our tracked blob function. 10 - numbits 
-						tb->update(col, gapNumFrames, numBits, &labelPoints); 
+						//int col = vidPix[index] + vidPix[index+1] + vidPix[index+2];
+												// pass it into our tracked blob function. 10 - numbits 
+						tb->update(col, gapNumFrames, numBits, milsbetweenframes, &labelPoints); 
 						
 						if(!tb->enabled) {
 							// tracked Blob has disappeared - so we check it was a valid id. 
-							int id = tb->getID(bwthreshold);
-							if(id>-1){
-								cout <<  "FOUND! : "<< id << " " << tb->centroid.x << " " << tb->centroid.y << "\n";
-								foundPhones.push_back(new FoundPhone(id, tb->centroid.x, tb->centroid.y)); 
-								
-							}; 
-							spareTrackedBlobs.push_back(tb); 
-						}
-						else {
-							
+														
+							it = trackedBlobs.erase(it); 
+							trackedBlobsToCheck.push_back(tb); 
+
+						} else {
+							it++; 
 							
 						}
-						
 					}
 					
 				}
 			}
 		}
+		
+		
 	}
+	
+	if(trackedBlobsToCheck.size()>0) { 
+		
+		TrackedBlob * tb = *trackedBlobsToCheck.begin(); 
+		trackedBlobsToCheck.pop_front();
+		
+		float thresh = 0.25;// bwthreshold; 
+		int id =-1; 
+		while((thresh<1) && (id==-1)) {
+			id = tb->getID(thresh);
+			thresh+=0.25; 
+		} 
+		if(id>-1){
+			//cout <<  "FOUND! : "<< id << " " << tb->centroid.x << " " << tb->centroid.y << "\n";
+			foundPhones.push_back(new FoundPhone(id, tb->data)); 
+			
+		}; 
+		
+		if(tb->pixelCount>tb->lifeExpectancy*2) { 
+			trackingDebugData.begin(); 
+			if(id>-1) ofSetColor(0,255,0); 
+			else ofSetColor(255, 0, 0);
+			ofLine(0,(float)trackingDebugDataLine+0.5f,1,(float)trackingDebugDataLine+0.5f); 
+			ofSetColor(0,0,255);
+			ofLine(0,(float)trackingDebugDataLine+1.5f,1,(float)trackingDebugDataLine+1.5f); 
+			
+			ofSetColor(255); 
+			tb->trackedPixels.update();
+			tb->trackedPixels.draw(1,trackingDebugDataLine); 
+			
+			trackingDebugDataLine++;
+			ofEnableSmoothing(); 
+			ofSetLineWidth(1); 
+			
+			TrackedBlobData* data = tb->data; 
+			float x = 1; 
+			for(int i=0; i<data->pulseLengths.size();i++) {
+				IDPulseData* pulse = (data->pulseLengths[i]);
+				ofSetColor(pulse->isBlack() ? 0 : 255);
+				ofLine(x, (float)trackingDebugDataLine+0.5f, x+pulse->length, (float)trackingDebugDataLine+0.5f);
+				x+=pulse->length; 
+			}
+			ofDisableSmoothing(); 
+			trackingDebugDataLine+=2; 
+			trackingDebugData.end(); 
+		}
+		
+		spareTrackedBlobs.push_back(tb); 
+		
+	}
+	
+	
 	return foundPhones; 
 	
 	
@@ -215,29 +310,38 @@ void PhoneTracker :: draw() {
 	
 	// set the colour to white and then draw the video
 	ofSetColor(255,255,255); 
-	if(updateVideo) cvColour.draw(0,0, 1024,768); 
 	
+	
+	if(updateVideo) {
+		ofPushMatrix(); 
+		ofTranslate(ofGetWidth()/2,ofGetHeight()/2); 
+		ofScale(flipX ? -1 :1, flipY ? -1 : 1); 
+
+		cameraManager.draw(-vidWidth/2,-vidHeight/2);
+
+		ofPopMatrix(); 
+	}
 	if(broadcasting) { 
 		ofPushMatrix(); 
+		ofTranslate((ofGetWidth()/2) - (vidWidth/2), (ofGetHeight()/2) - (vidHeight/2)); 
 		// scale up dependent on video width vs the screen width
-		ofScale(1024.0/vidWidth, 768.0/vidHeight); 
+		//ofScale(1024.0/vidWidth, 768.0/vidHeight); 
 	
 		// draw all the blobs! 
 		//for (int i = 0; i < contourFinder.nBlobs; i++){
 //			contourFinder.blobs[i].draw(0,0);
 //			
 //		}
-	
-		for(int i=0; i<trackedBlobs.size(); i++) { 
-			trackedBlobs[i]->draw(bwthreshold);
+		//ofEnableAlphaBlending(); 
+		list<TrackedBlob*>::iterator it; 
+		for(it=trackedBlobs.begin(); it!=trackedBlobs.end(); it++) { 
+			(*it)->draw(vidWidth, vidHeight);
 		
 		}
-	
+		//ofDisableAlphaBlending(); 
 		ofPopMatrix();
 		ofSetColor(255,255,255); 
 	}
-	//ofFill(); 
-	//ofDrawBitmapString(ofToString(gapNumFrames), ofPoint(500,10));
 	
 }
 	

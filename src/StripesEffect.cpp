@@ -14,7 +14,7 @@ void StripesEffect::update() {
 	
 	if(!started) return; 
 	
-	fbo.begin(); 
+	fbo->begin(); 
 	frame ++; 
 	if(frame>speed+1) {
 		//ofColor temp = colour1; 
@@ -41,7 +41,7 @@ void StripesEffect::update() {
 	
 	
 	
-	fbo.end(); 
+	fbo->end(); 
 	
 	
 	

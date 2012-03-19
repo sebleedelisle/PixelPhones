@@ -11,35 +11,46 @@
 
 #include "ofMain.h"
 #include "IDPulseData.h"
+#include "TrackedBlobData.h"
+#include "ofxOpenCv.h"
+
 
 class TrackedBlob {
 
 	public : 
 	TrackedBlob() ;
-	void update(int col, int gapNumFrames, int numbits, vector<ofPoint *> * otherPoints = NULL) ; 
+	void update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, vector<ofPoint *> * otherPoints = NULL); 
+	void updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, float vidScale); 
 	void reset() ; 
-	void draw(float bwthreshold) ; 
+	void draw(int vidwidth, int vidheight) ; 
 	int getID(float threshold = 0.5); 
-	int decodeManchesterString(string * code);
-	bool vectorContainsInt(vector <int> * vec, int num);
-	void updateGreys();
+//	int decodeManchesterString(string * code);
+//	bool vectorContainsInt(vector <int> * vec, int num);
+//	void updateGreys();
 	
-	ofPoint	centroid; 
 	ofPoint labelCentre; 
-	ofRectangle boundingRect; 
 
-	int counter; 
+	//int counter; 
 	int lastUpdated; 
 	int lifeExpectancy; 
 	
 	
 	bool enabled; 
-	bool blackGaps; 
-	int numBits; 
+	
+	//bool blackGaps; 
+	//int numBits; 
 
 	ofColor colour; 
-	vector<int> colours; 
-	vector<float> greys; 
+	int pixelCount; 
+//	vector<ofColor> colours; 
+//	vector<float> greys; 
+//	vector<float> times; 
+	ofPoint	pixelPosition; 
+//	ofRectangle boundingRect; 
+
+	TrackedBlobData* data; 
+	
+	ofImage trackedPixels; 
 
 
 };

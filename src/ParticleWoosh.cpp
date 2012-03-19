@@ -35,7 +35,7 @@ void ParticleWoosh::update() {
 		
 	}
 	
-	fbo.begin(); 
+	fbo->begin(); 
 
 	ofEnableAlphaBlending();
 	ofSetColor(0,0,0, fade); 
@@ -81,7 +81,7 @@ void ParticleWoosh::update() {
 	
 	
 	
-	fbo.end(); 
+	fbo->end(); 
 	
 	currentSpeed = speed; 
 	

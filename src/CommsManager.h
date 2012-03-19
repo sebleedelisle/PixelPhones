@@ -22,7 +22,7 @@ class CommsManager {
 	
 	void update(); 
 	bool setup(int portNum); 
-	void draw();
+	void draw(int vidWidth, int vidHeight);
 	
 	void sendAllPhones(string msg); 
 	void sendAllPhonesColour(ofColor col); 
@@ -49,4 +49,6 @@ class CommsManager {
 	int frameRate; 
 	int posBrightness; 
 	ofTrueTypeFont labelFont; 
+	
+	ofFbo labelFbo; 
 };

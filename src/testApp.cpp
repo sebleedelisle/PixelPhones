@@ -8,6 +8,8 @@ void testApp::setup(){
 	
 	guiSetup(); 
 	
+	
+	
 	phoneTracker.setupCamera(640,480);
 	if(!commsManager.setup(portNum)) {
 		portNum++;
@@ -19,6 +21,11 @@ void testApp::setup(){
 	
 	ofBackground(0,0,0);
 	toggleBroadcastIDs = false; 
+	
+
+	//ofSetVerticalSync(true);
+	//ofEnableSmoothing();
+	
 	
 }
 
@@ -69,8 +76,17 @@ void testApp::update(){
 void testApp::draw(){
 	
 	phoneTracker.draw();
-	commsManager.draw(); 	
+	commsManager.draw(phoneTracker.vidWidth, phoneTracker.vidHeight); 	
 	phoneRenderer.draw(); 
+	
+	int framerate = ofGetFrameRate();
+	if(framerate<60) { 
+		ofSetColor(255,ofMap(framerate, 30, 60, 0,255, true),0); 
+		ofFill();
+		ofRect(0,0,10,10); 
+				   
+	}
+		
 	gui.draw(); 
 	
 	
@@ -97,6 +113,8 @@ void testApp::guiSetup() {
 		
 	//ofxSimpleGuiContent * cam = (ofxSimpleGuiContent * )&
 	//gui.addContent("Camera feed", phoneTracker.cvColour, 220).setNewColumn(true);
+	
+	gui.addToggle("Recording Video", phoneTracker.recording).setSize(200,30); 
 		
 	gui.addToggle("Flip X", phoneTracker.flipX).setSize(200,30); 
 	gui.addToggle("Flip Y", phoneTracker.flipY).setSize(200,30); 
@@ -119,6 +137,7 @@ void testApp::guiSetup() {
 
 	phoneRenderer.nyanCatch->gameStartSwitch = false; 
 	phoneRenderer.startProgramSwitch = false; 
+	phoneTracker.recording = false; 
 	
 	gui.show();
 
@@ -145,7 +164,8 @@ void testApp::keyPressed(int key){
 				toggleBroadcastIDs = !toggleBroadcastIDs; 
 				break; 
 			case 'v': 
-				phoneTracker.vidGrabber.videoSettings(); 
+
+				phoneTracker.cameraManager.videoSettings(); 
 				break;
 				
 			case 'r': 
@@ -181,11 +201,17 @@ void testApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 
+	float xf = (float)(x - (ofGetWidth()/2 + phoneTracker.vidWidth/2)) / (float)phoneTracker.vidWidth; 
+	float yf = (float)(y - (ofGetHeight()/2 + phoneTracker.vidHeight/2)) / (float)phoneTracker.vidHeight; 
+	cout << xf << " " << yf << "\n";
 	if(!gui.isOn()) commsManager.mousePressed(x,y,button); 
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
+	
+	float xf = (float)(x - (ofGetWidth()/2 + phoneTracker.vidWidth/2)) / (float)phoneTracker.vidWidth; 
+	float yf = (float)(x - (ofGetWidth()/2 + phoneTracker.vidWidth/2)) / (float)phoneTracker.vidWidth; 
 	
 	commsManager.mouseReleased(x,y,button); 
 }
@@ -207,7 +233,18 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 
 void testApp::exit() { 
 	commsManager.TCP.close(); 
-	phoneTracker.vidGrabber.close(); 
-
+	
+	//phoneTracker.vidGrabber.close(); 
+	//phoneTracker.libdcCamera.close(); 
+	
+	//cameraManager.close(); 
+	phoneTracker.cameraManager.close(); 
+	
+	if(phoneTracker.trackingDebugDataLine>0) {
+		ofPixels pixels;
+		phoneTracker.trackingDebugData.getTextureReference().readToPixels(pixels);
+		
+		ofSaveImage(pixels,"testdata/"+ofGetTimestampString()+".png"); 
+	}
 
 }

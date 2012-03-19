@@ -11,6 +11,9 @@
 #include "ofxOpenCv.h"
 #include "TrackedBlob.h"
 #include "FoundPhone.h"
+#include "CameraManager.h"
+#include <vector>
+
 
 class PhoneTracker { 
 	
@@ -30,12 +33,20 @@ class PhoneTracker {
 	// all work in the same place :)
 	
 	ofxCvColorImage cvColour; 
+	ofxCvColorImage cvVideo; 
 	ofxCvGrayscaleImage cvGrey;
 	ofxCvGrayscaleImage cvGreyPrevious; 
 	ofxCvGrayscaleImage cvDiff; 
 	ofxCvContourFinder 	contourFinder;
 	
-	ofVideoGrabber vidGrabber; 
+	CameraManager cameraManager; 
+	
+//#ifdef USE_LIBDC
+//	ofxLibdc::Camera libdcCamera; 
+//	ofImage libdcCameraImage; 
+//#else
+//	ofVideoGrabber vidGrabber; 
+//#endif
 	
 	int differenceThreshold;
 	int minBlobSize; 
@@ -44,7 +55,9 @@ class PhoneTracker {
 	
 	int vidWidth; 
 	int vidHeight; 
-	int vidScale; 
+	int cvWidth; 
+	int cvHeight;
+	float vidScale; 
 	
 	
 	float lastVideoFrameMils; 
@@ -53,8 +66,9 @@ class PhoneTracker {
 	int numBits; 
 	float gapNumFrames; 
 	
-	vector <TrackedBlob*> trackedBlobs; 
+	list <TrackedBlob*> trackedBlobs; 
 	vector <TrackedBlob*> spareTrackedBlobs; 
+	deque <TrackedBlob*> trackedBlobsToCheck; 
 	
 	bool vidReset; 
 	
@@ -65,7 +79,13 @@ class PhoneTracker {
 	bool flipX; 
 	bool flipY; 
 	
+	bool recording; 
+	
 	float bwthreshold; 
+	
+	ofFbo trackingDebugData; 
+	int trackingDebugDataLine; 
+	
 	
 	
 	

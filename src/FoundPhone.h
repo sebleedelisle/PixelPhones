@@ -8,17 +8,17 @@
  */
 #pragma once
 #include "ofMain.h"
+#include "TrackedBlobData.h"
 
 class FoundPhone { 
 	
 	public : 
 	
-	FoundPhone(int id, float x, float y); 
+	FoundPhone(int id, TrackedBlobData* data); 
 	
 	int ID; 
-	ofVec2f	position;
+	ofVec2f	unitPosition;
 	ofColor currentColour; 
-		
 	
 	
 };

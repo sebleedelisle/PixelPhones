@@ -9,6 +9,7 @@
 #include "PhoneTracker.h"
 #include "CommsManager.h"
 #include "PhoneRenderer.h"
+#include "CameraManager.h"
 
 class testApp : public ofBaseApp{
 
@@ -45,6 +46,7 @@ class testApp : public ofBaseApp{
 	PhoneTracker phoneTracker;
 	CommsManager commsManager; 
 	PhoneRenderer phoneRenderer; 
+
 	
 	
 	

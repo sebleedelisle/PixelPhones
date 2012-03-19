@@ -9,6 +9,13 @@
 
 #include "ConnectedPhone.h"
 
+ConnectedPhone::ConnectedPhone(ofFbo * labelfbo) { 
+	
+	labelFbo = labelfbo; 
+	labelImage.allocate(labelfbo->getWidth(), labelfbo->getHeight(), OF_IMAGE_COLOR_ALPHA);
+	
+}
+
 void ConnectedPhone::setup(WebSocketClient *webclient, int id) { 
 
 	webClient = webclient; 
@@ -23,6 +30,24 @@ void ConnectedPhone::setup(WebSocketClient *webclient, int id) {
 	
 	syncStatus = NOT_SYNCED;
 	isDragging = false; 
+	
+	labelFbo->begin(); 
+	ofClear(0,0,0,0); 
+	ofNoFill(); 
+	//ofEnableSmoothing();
+	ofSetLineWidth(1);
+	ofSetColor(255,255,255,255); 
+	ofPushMatrix(); 
+	ofTranslate(10,10); 
+	string idstr = ofToString(ID);
+	labelFont->drawString(idstr,(-(float)idstr.size()*7.0f/2.0f),4);
+	ofEllipse(0, 0, 19, 19);
+	ofPopMatrix();
+	//ofDisableSmoothing();
+	labelFbo->end(); 
+	
+	labelFbo->readToPixels(labelImage.getPixelsRef());
+	labelImage.update(); 
 	
 	
 	//queuedMessages.append(ofToString((char)0) + "hellooo?" +(ofToString((char)0xff))); 
@@ -39,14 +64,13 @@ void ConnectedPhone::update() {
 	if((!handShaked) && (webClient->handShaked)){
 		// just connected! So send messages... 
 	
-		cout << "CONNECTED!\n" ;
+		//cout << "CONNECTED!\n" ;
 	
 		//sendColour(ofColor(255,128,0)); 
 
 	} else if(webClient->receiveString.length()>0) {
 		
 		// should really break this up into separate messages... 
-		
 		
 		vector <string> msgs = ofSplitString(webClient->receiveString, ofToString((char)0xff));
 		
@@ -62,6 +86,7 @@ void ConnectedPhone::update() {
 					// TODO SHould actually just strip out up to the 
 					// 0xff; 
 					sendMsg( "i"+ofToString(ID));
+					//sendMsg( "i"+ofToString(53));
 					sendColour(ofColor(0,255,0)); 
 					// if there's a queue of stuff built up, send it
 					
@@ -105,8 +130,8 @@ void ConnectedPhone::update() {
 	}
 	
 	if(isDragging) {
-		pixelPosition.set(ofGetMouseX()-dragOffset.x, ofGetMouseY()-dragOffset.y);
-		unitPosition.set( pixelPosition.x/(float)ofGetWidth(), pixelPosition.x/(float)ofGetHeight() );
+		//pixelPosition.set(, );
+		unitPosition.set( (ofGetMouseX()-dragOffset.x)/(float)ofGetWidth(), (ofGetMouseY()-dragOffset.y)/(float)ofGetHeight() );
 		//cout << pixelPosition << unitPosition << "\n";
 		
 	}
@@ -114,24 +139,25 @@ void ConnectedPhone::update() {
 	
 }
 
-void ConnectedPhone::draw(int brightness) { 
+void ConnectedPhone::draw(int brightness, int vidWidth, int vidHeight) { 
 	
 	ofPushMatrix(); 
 	
-	ofEnableBlendMode(OF_BLENDMODE_ADD);
-	ofTranslate( pixelPosition.x, pixelPosition.y);
+	ofTranslate( (int)(unitPosition.x*vidWidth), (int)(unitPosition.y*vidHeight));
 	if(found) ofSetColor(0,brightness, 0); 
 	else ofSetColor((int)(brightness/2)); 
 	
-	ofNoFill(); 
-	ofSetLineWidth(1);
-	ofEllipse(0,0, 20, 20);
-	ofFill();
-	//ofSetColor(brightness); 
+//	ofNoFill(); 
+//	ofSetLineWidth(1);
+//	ofRect(-10,-10, 20, 20);
+//	ofFill();
 
+	//ofSetColor(255); 
+	labelImage.draw(-10, -10); 
+	
 	string idstr = ofToString(ID); 
 	
-	labelFont->drawString(idstr,(-(float)idstr.size()*7.0f/2.0f),4);
+	//labelFont->drawString(idstr,(-(float)idstr.size()*7.0f/2.0f),4);
 	ofPopMatrix(); 
 	//get the ip and port of the client
 	
@@ -141,8 +167,7 @@ void ConnectedPhone::draw(int brightness) {
 	//draw the info text and the received text bellow it
 	//ofDrawBitmapString(info, xPos, yPos);
 	
-	ofDisableBlendMode();
-	
+		
 }
 
 
@@ -248,20 +273,22 @@ void ConnectedPhone :: startSync() {
 bool ConnectedPhone ::hitTest(int x,int y) { 
 		
 	ofVec2f mouseDistance(x,y);
-	mouseDistance-=pixelPosition;
 	
-	//cout << "hittest "<< mouseDistance << "\n";
-	
-	if(mouseDistance.squareLength() < 20*20) return true;
-	else return false; 
-	
+//	mouseDistance-=pixelPosition;
+//	
+//	//cout << "hittest "<< mouseDistance << "\n";
+//	
+//	if(mouseDistance.squareLength() < 20*20) return true;
+//	else return false; 
+// TODO : FIX!!!
+	return false; 
 	
 }
 
 void ConnectedPhone :: startDragging(int x, int y) { 
 	if(!isDragging); 
 	isDragging = true; 
-	dragOffset.set(x-pixelPosition.x, y-pixelPosition.y); 
+	//dragOffset.set(x-pixelPosition.x, y-pixelPosition.y); 
 	found = !found; 
 	
 }

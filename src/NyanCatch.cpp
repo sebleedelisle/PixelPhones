@@ -81,7 +81,7 @@ void NyanCatch::update() {
 					
 					phone->startMessageSent = true; 
 					
-					catTargetPos.set(cphone->pixelPosition); 
+					catTargetPos.set(cphone->unitPosition); 
 				}
 				
 				

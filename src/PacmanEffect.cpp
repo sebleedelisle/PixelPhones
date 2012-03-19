@@ -13,7 +13,7 @@
 void PacmanEffect::update() {
 	
 	if(!started ) return; 
-	fbo.begin(); 
+	fbo->begin(); 
 	frame +=2; 
 	float openness = (((frame%30)<15)? frame%30 : 30-(frame%30))*3;// abs(sinf(frame*0.15)) * 45; 
 	
@@ -76,7 +76,7 @@ void PacmanEffect::update() {
 	ofPopMatrix(); 
 	
 	
-	fbo.end(); 
+	fbo->end(); 
 	
 	
 	

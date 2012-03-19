@@ -11,10 +11,8 @@
 
 CommsManager::CommsManager() { 
 	
-	cout << "constructor \n";
 	broadcastingIDs = false; 
-		
-	
+	labelFbo.allocate(20, 20, GL_RGBA, 0);
 }
 
 
@@ -77,7 +75,7 @@ void CommsManager::update(){
 				websocketclient->setup(id,client); 
 				
 				// this makes a new one I think!
-				ConnectedPhone * phone = new ConnectedPhone(); 
+				ConnectedPhone * phone = new ConnectedPhone(&labelFbo); 
 				phone->labelFont = &labelFont; 
 				connectedPhones[i] = phone; 
 				phone->tcp = &TCP; 
@@ -130,7 +128,7 @@ void CommsManager::update(){
 	
 }
 
-void CommsManager::draw() { 
+void CommsManager::draw(int vidWidth, int vidHeight) { 
 	
 	ofSetHexColor(0xDDDDDD);
 	ofDrawBitmapString("Socket server connect on port: "+ofToString(TCP.getPort()) + " num:"+ofToString(TCP.getNumClients())+" "+ofToString(TCP.TCPConnections.size()), 10, 20);
@@ -169,6 +167,10 @@ void CommsManager::draw() {
 		
 	}*/
 	
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+
+	ofPushMatrix(); 
+	ofTranslate( ofGetWidth()/2 - vidWidth/2,  ofGetHeight()/2 - vidHeight/2 );
 	if(posBrightness>0) {
 		map<int,ConnectedPhone*>::iterator phoneit;
 		
@@ -178,10 +180,15 @@ void CommsManager::draw() {
 			
 			//if(!phone->found) continue; 
 			
-			phone->draw(posBrightness);
+			phone->draw(posBrightness, vidWidth, vidHeight);
 			
 		}
 	}	
+	
+	ofPopMatrix(); 
+	ofDisableBlendMode(); 
+	
+	
 	
 	//
 //	for(map<int,ConnectedPhone>::iterator it2=connectedPhones.begin(); it2!=connectedPhones.end(); it2++){
@@ -288,25 +295,14 @@ void CommsManager::foundPhones(vector <FoundPhone *> phones, int vidWidth, int v
 			
 			//cout << "Looking for " << phone->ID << " found " << cphone->ID << "\n";
 			if(cphone->ID == phone->ID) {
-				cphone->unitPosition.set(phone->position.x/float(vidWidth), phone->position.y/float(vidHeight));
-				cphone->pixelPosition.set(cphone->unitPosition.x * ofGetWidth(), cphone->unitPosition.y * ofGetHeight()); 
+				cphone->unitPosition.set(phone->unitPosition);
+				//cphone->pixelPosition.set(cphone->unitPosition.x * ofGetWidth(), cphone->unitPosition.y * ofGetHeight()); 
 				
 				cphone->stopBroadcastingID(); 
 				cphone->found = true; 
 		
 				cout<< "Found phone "<< cphone->ID << " " << phone->ID << " " << cphone->unitPosition.x << " " << cphone->unitPosition.y << "\n"; 
-								//------------------------
-				
-				/*
-				// USE THIS CODE TO TEST THE PHONE BRODCAST SYSTEM! 
-				cphone->ID = (cphone->ID+connectedPhones.size()) % (int)(pow(2.0f, (float)numBits));
-				cphone->sendMsg( "i"+ofToString(cphone->ID));
-				cphone->sendColour(ofColor(255,0,0));
-				cphone->found = false; 
-				cphone->broadcastID();
-				
-				break;
-				*/
+								
 				
 			}
 		}

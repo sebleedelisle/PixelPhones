@@ -1,0 +1,2 @@
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/TrackedBlobData.cpp: In member function 'int TrackedBlobData::getID(float)':
+/Users/seb/Dropbox/openFrameworks/apps/PixelPhones/PixelPhones/src/TrackedBlobData.cpp:57: error: 'pulseLengths' was not declared in this scope
