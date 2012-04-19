@@ -7,10 +7,11 @@ void testApp::setup(){
 	
 	
 	guiSetup(); 
-	
-	
+
 	
 	phoneTracker.setupCamera(640,480);
+	gui.control("warp").setSize(phoneTracker.vidWidth/phoneTracker.vidScale, phoneTracker.vidHeight/phoneTracker.vidScale);
+	
 	if(!commsManager.setup(portNum)) {
 		portNum++;
 		if(portNum>12000) portNum = 11995; 
@@ -32,10 +33,15 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
 
-	//if(vidReset) {
-//		phoneTracker.setupCamera(160*vidScale,120*vidScale);
-//		vidReset = false;
-//	}	
+	for(int i =0; i<4; i++) {
+		if(warpPoints[i]!=commsManager.sourcePoints[i]) { 
+			//cout << "updating warp points \n";
+			commsManager.updateWarpPoints(warpPoints, phoneTracker.cvColour.getWidth(), phoneTracker.cvColour.getHeight()); 
+			 
+			break; 
+		}
+	}
+	
 	//bit nasty - we pass through a boolean if we're currently broadcasting ids
 	vector <FoundPhone *> foundPhones = phoneTracker.update(commsManager.broadcastingIDs);
 	if(foundPhones.size()>0) {
@@ -63,10 +69,15 @@ void testApp::update(){
 		commsManager.setNumBits(numBits);
 		phoneTracker.numBits = numBits; 
 	}
-	if(phoneFrameRate!=commsManager.frameRate){
-		commsManager.setFrameRate(phoneFrameRate);
+	if( (phoneFrameRate!=commsManager.phoneFrameRate) || 
+        (doubleToSingleRatio!=commsManager.doubleToSingleRatio) || 
+        (blackTimeOffset!=commsManager.blackTimeOffset)) {
+        
+		commsManager.setFrameRate(phoneFrameRate, doubleToSingleRatio, blackTimeOffset);
 		phoneTracker.phoneFrameRate = phoneFrameRate; 
-	}
+        phoneTracker.doubleToSingleRatio = doubleToSingleRatio;
+	
+    }
 	
 	phoneRenderer.update(); 
 	
@@ -107,9 +118,12 @@ void testApp::guiSetup() {
 	gui.addPage("PhoneTracking");
 	
 	gui.addContent("Difference feed", phoneTracker.cvDiff,200);
+    gui.addContent("Difference blend", phoneTracker.cvDiffBlended,200);
 	gui.addSlider("differenceThreshold", phoneTracker.differenceThreshold, 0, 255).setNewColumn(true).setSize(200,30);
 	gui.addSlider("position brightness", commsManager.posBrightness,0,255).setSize(200,30); 
-	gui.addToggle("BROADCAST IDs", toggleBroadcastIDs).setNewColumn(true).setSize(200,30);
+	gui.addToggle("showPositions P", commsManager.showPositions).setSize(200,30); 
+	gui.addToggle("showTrails T", phoneTracker.showTrails).setSize(200,30); 
+	gui.addToggle("broadcast IDs I", toggleBroadcastIDs).setNewColumn(true).setSize(200,30);
 		
 	//ofxSimpleGuiContent * cam = (ofxSimpleGuiContent * )&
 	//gui.addContent("Camera feed", phoneTracker.cvColour, 220).setNewColumn(true);
@@ -120,15 +134,23 @@ void testApp::guiSetup() {
 	gui.addToggle("Flip Y", phoneTracker.flipY).setSize(200,30); 
 	
 	gui.addSlider("phoneFrameRate", phoneFrameRate, 1, 30).setNewColumn(true).setSize(200,30);
+    gui.addSlider("blackToWhiteRatio", doubleToSingleRatio, 2, 6).setSize(200,30); 
+    gui.addSlider("blackTimeOffset", blackTimeOffset, 0, 200).setSize(200,30); 
+    gui.addSlider("diffSkipFrames", phoneTracker.diffSkipFrames, 1, 10).setSize(200,30); 
+    
 	gui.addSlider("minBlobSize", phoneTracker.minBlobSize, 0, 255).setSize(200,30);
 	gui.addSlider("maxBlobSize", phoneTracker.maxBlobSize, 1, 500).setSize(200,30);
 	gui.addSlider("videoFrameRate", phoneTracker.videoFrameRate, 0, 100).setSize(200,30);
 	gui.addSlider("b w threshold", phoneTracker.bwthreshold, 0, 1).setSize(200,30);
 	gui.addSlider("track distance", phoneTracker.trackDistance, 0, 40).setSize(200,30);
+
+	gui.addPage("screenwarp"); 
+	gui.addQuadWarper("warp", phoneTracker.cvColour, warpPoints);
+	gui.addToggle("syncing", commsManager.syncing).setSize(200,30);
 	
 	gui.addPage("PhoneRenderer"); 
 
-	gui.addToggle("syncing", commsManager.syncing).setSize(200,30);
+	gui.addToggle("syncing S", commsManager.syncing).setSize(200,30);
 	gui.addSlider("concurrent syncs", commsManager.numConcurrentSyncs, 1, 200).setSize(200,30);
 	
 	phoneRenderer.initGui(&gui); 
@@ -159,10 +181,19 @@ void testApp::keyPressed(int key){
 			case ' ': gui.toggleDraw(); break;
 			case '[': gui.prevPage(); break;
 			case ']': gui.nextPage(); break;
-			case 'p': gui.nextPageWithBlank(); break;
+			//case 'p': gui.nextPageWithBlank(); break;
 			case 'i':
 				toggleBroadcastIDs = !toggleBroadcastIDs; 
 				break; 
+			case 's':
+				commsManager.syncing = !commsManager.syncing; 
+				break; 
+            case 'p':
+				commsManager.showPositions = !commsManager.showPositions; 
+				break; 
+            case 't':
+				phoneTracker.showTrails = !phoneTracker.showTrails; 
+				break;     
 			case 'v': 
 
 				phoneTracker.cameraManager.videoSettings(); 

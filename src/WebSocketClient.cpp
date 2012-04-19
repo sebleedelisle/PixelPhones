@@ -78,8 +78,8 @@ string WebSocketClient::procClientHeader(string header, int port){
 	
 	long longnum1 = -1;
 	long longnum2 = -1;
-	long key1 = NULL;
-	long key2 = NULL;
+	long key1 = -1;
+	long key2 = -1;
 	string h_upgrade, h_connection, h_origin;
 	
 	string key3;
@@ -103,7 +103,7 @@ string WebSocketClient::procClientHeader(string header, int port){
 		}
 	}
 	
-	if((key1==NULL) || (key2==NULL) || (key3 =="") || (h_upgrade=="") || (h_origin=="")) return ""; 
+	if((key1==-1) || (key2==-1) || (key3 =="") || (h_upgrade=="") || (h_origin=="")) return ""; 
 	//printf("key1 %d key2 %d key3 %s\n", key1, key2, key3.c_str());
 	unsigned char sum[16];
 	

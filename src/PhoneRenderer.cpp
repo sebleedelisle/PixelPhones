@@ -9,7 +9,6 @@
 
 #include "PhoneRenderer.h"
 
-
 PhoneRenderer:: PhoneRenderer() { 
 	
 	frameRate = 30; 
@@ -17,12 +16,12 @@ PhoneRenderer:: PhoneRenderer() {
 	int h = 240; 
 	currentProgramFbo.allocate(w, h, GL_RGB, 0);
 	
-	outputPrograms.push_back(new RainbowEffect(w,h)); 
+	addProgram(new RainbowEffect(w,h)); 
 	//
-	outputPrograms.push_back(stripesEffect = new StripesEffect(w,h)); 
-	outputPrograms.push_back(pacmanEffect = new PacmanEffect(w,h)); 
-	outputPrograms.push_back(nyanCatch = new NyanCatch()); 
-	outputPrograms.push_back(particleWoosh = new ParticleWoosh(w,h)); 
+	addProgram(stripesEffect = new StripesEffect(w,h)); 
+	addProgram(pacmanEffect = new PacmanEffect(w,h)); 
+	addProgram(nyanCatch = new NyanCatch()); 
+	addProgram(particleWoosh = new ParticleWoosh(w,h)); 
 	
 	
 
@@ -32,6 +31,7 @@ PhoneRenderer:: PhoneRenderer() {
 	
 	latency = 0; 
 	
+		
 	
 }
 
@@ -53,6 +53,7 @@ void PhoneRenderer::update() {
 	}
 	
 	if(currentProgram == NULL) return; 
+	currentProgram->onlyUseFoundPhones = onlyUseFoundPhones; 
 	
 	if(startProgramSwitch && !currentProgram->started) {
 			
@@ -61,6 +62,7 @@ void PhoneRenderer::update() {
 	} else if((!startProgramSwitch) && (currentProgram->started)) { 
 		currentProgram->stop(); 
 		startProgramSwitch = false;
+		clearPhones();
 	}
 	//cout << "PR:update " << startProgramSwitch << " " << currentProgram->started << "\n";
 	
@@ -109,29 +111,12 @@ void PhoneRenderer :: updatePhonesWithFBO( ofFbo * fbo) {
 		
 		ConnectedPhone * phone = phoneit->second; 
 		
-	
-	//for(int i = 0; i<phones->size(); i++) {
-//		
-//		ConnectedPhone * phone = &(phones->at(i)); 
+		if((!onlyUseFoundPhones) || phone->found) {
+			
+			
+			
+			ofColor col = pixels.getColor(phone->warpedPosition.x * fbo->getWidth(), phone->warpedPosition.y* fbo->getHeight()); 
 		
-		if(true) {//phone->found) {
-			
-			//SHOULD PROB CHANGE THIS TO UNIT POSITION
-			ofPoint point = phone->unitPosition;
-			
-			ofColor col = pixels.getColor(point.x * fbo->getWidth(), point.y* fbo->getHeight()); 
-			//col.a = 20;
-//			ofSetColor(col); 
-//			
-//			ofCircle( point.x,  point.y,12); 
-//			ofCircle( point.x, point.y,8); 
-//			ofCircle( point.x, point.y,6); 
-//			ofCircle(point.x, point.y,3);
-//			ofCircle( point.x, point.y,2);
-//			col.a = 255;
-//			ofSetColor(col); 
-//			ofCircle(point.x, point.y,1);
-			
 			// NOW BROADCAST COLOUR TO PHONE! 
 		
 			phone->sendColour(col, latency, currentProgram->fadeUp, currentProgram->fadeDown);
@@ -179,6 +164,15 @@ void PhoneRenderer::draw() {
 	
 }
 
+void PhoneRenderer :: addProgram( OutputEffect * program) {
+	
+	outputPrograms.push_back(program); 
+
+	
+}
+
+
+
 void PhoneRenderer :: changeProgram(int programnum) { 
 	
 	
@@ -202,6 +196,27 @@ void PhoneRenderer :: changeProgram(int programnum) {
 	}
 	//startProgramSwitch = false; 
 	
+	clearPhones(); 
+	
+}
+
+void PhoneRenderer :: clearPhones() { 
+	
+	map <int,ConnectedPhone *> * phones = &(commsManager->connectedPhones); 
+	
+	map<int,ConnectedPhone *>::iterator phoneit = phones->begin();
+	
+	while(phoneit!=phones->end()) {
+		
+		ConnectedPhone * phone = phoneit->second; 
+		
+		// NOW BROADCAST COLOUR TO PHONE! 
+			
+		phone->sendColour(0,0,0,0);
+		
+		
+		phoneit++; 
+	}
 }
 
 void PhoneRenderer :: initGui(ofxSimpleGuiToo * gui){
@@ -212,7 +227,7 @@ void PhoneRenderer :: initGui(ofxSimpleGuiToo * gui){
 	gui->addSlider("Current Program", currentProgramIndex, 0, outputPrograms.size()-1);
 	gui->addSlider("latency", latency, 0, 3000).setSize(200,30);
 	gui->addSlider("framerate", frameRate, 0, 100).setSize(200,30);
-	
+	gui->addToggle("Only use found phones", onlyUseFoundPhones).setSize(200,30); 
 	
 	gui->addSlider("stripeSpeed", stripesEffect->speed, 1, 100).setNewColumn(true).setSize(200,30);
 	gui->addSlider("fadeUp", stripesEffect->fadeUp, 0, 3).setSize(200,30);
@@ -228,7 +243,7 @@ void PhoneRenderer :: initGui(ofxSimpleGuiToo * gui){
 	gui->addToggle("Start Nyan", nyanCatch->gameStartSwitch).setNewColumn(true).setSize(200,30); 
 	gui->addSlider("Nyan Speed", nyanCatch->speed, 200,3000).setSize(200,30); 
 	gui->addSlider("Cat Interval", nyanCatch->catInterval, 1,3000).setSize(200,30); 
-	gui->addToggle("Only found phones", nyanCatch->onlyUseFoundPhones).setSize(200,30); 
+	//gui->addToggle("Only found phones", nyanCatch->onlyUseFoundPhones).setSize(200,30); 
 	
 	//gui->addPage("Nyan Catch");
 	

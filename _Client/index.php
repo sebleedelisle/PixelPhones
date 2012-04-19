@@ -67,7 +67,7 @@ div {
 	var socket, canvas, c, msgdiv, msgcount = 0, 
 		SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT=window.innerHeight, 
 		ID = -1, css3d = supports3D(), debugMode = false;
-		
+
 	// binary transmit vars : 
 	
 	var frameRate = 7,
@@ -79,13 +79,20 @@ div {
 	startTime = (new Date()).getTime(), 
 	currentFrame = 0, 
 	broadcastIntervalID = -1,
-	blackTimeOffset = 0.3, // proportion of a single frame extra to add on to darkness 
+	blackTimeOffset = 20, // number of extra mils to add to an 'off' signal than an on
 	doubleToSingleRatio = 2.5, // how much longer a double is than a single
-	currentBroadcastDigit = 0,
+	currentBroadcastDigitIndex = 0,
+	doubleDigit = false,  // true if we're currently broadcasting a double digit
+	currentDigit = 0, // the bit that we're currently broadcasting
 	lastChangeTime,
 	clock, 
 	programs, 
-	currentProgram;
+	currentProgram,
+	longestShortBlack = 0,
+	shortestLongBlack = Number.MAX_VALUE,
+	longestShortWhite = 0,
+	shortestLongWhite = Number.MAX_VALUE;
+	
 	
 	
 	window.addEventListener("load", init); 
@@ -177,7 +184,13 @@ div {
 							
 							if(msgstr.indexOf('|f')>-1) {
 								
-								var fadespeed = parseFloat(msgstr.substring(msgstr.indexOf('|f')+2, msgstr.length)); 
+								var fadespeed = msgstr.substring(msgstr.indexOf('|f')+2, msgstr.length);
+								if(fadespeed.indexOf('|')>-1) { 
+									fadespeed = fadespeed.substring(0, fadespeed.indexOf('|')); 
+									
+								}
+								fadespeed = parseFloat(fadespeed); 
+								 
 								var col = parseInt(msgstr.substring(1,7),16); 
 								
 								// TODO Add latency for fading! 
@@ -225,9 +238,20 @@ div {
 						setNumber(broadcastNumber);
 						reset();
 						
+					} else if(msgstr.substring(0,1)=='r') {
+					// CHANGE BLACK TO WHITE RATIO
+						log('blackToWhiteRatio = '+msgstr.substring(1));
+						blackToWhiteRatio = parseFloat(msgstr.substring(1));
+						reset();
+					} else if(msgstr.substring(0,1)=='o') {
+						
+					// CHANGE BLACK TIME OFFSET 
+					 	log('blackTimeOffset = '+ msgstr.substring(1));
+						blackTimeOffset = parseInt(msgstr.substring(1));
+						reset(); 
 					} else if(msgstr.substring(0,1)=='t'){
 
-					//  CHANGE NUM OF BITS : n<numbits>
+					//  get server time : t<timeinmils>
 
 						log('server time : '+msgstr.substring(1)); 
 						clock.receiveServerTime(parseInt(msgstr.substring(1))); 
@@ -348,12 +372,15 @@ div {
 		broadcastIntervalID = 0;
 		lastChangeTime = (new Date()).getTime();
 		nextChangeTime = 0; 
-		currentBroadcastDigit = 0; 
+		currentBroadcastDigitIndex = 0; 
 		
-		setTimeout(function() { broadcastIntervalID = setInterval(loop,1);reset(); }, Math.floor(Math.random()*2000)) ; 
+		setTransform("scale(0,0)");	
 		changeColour("ffffff");
-		setTransform("scale(0,0)");		
-		//reset(); 
+	
+		setTimeout(function() { broadcastIntervalID = setInterval(loop,16);reset(); }, Math.floor(Math.random()*2000)) ; 
+		
+		//reset();
+		//broadcastIntervalID = setInterval(loop,1);
 		
 		log("broadcasting id : "+ID); 
 		log(broadcastNumber+"\n"+getBinaryCode(broadcastNumber)+"\n"+code);
@@ -377,28 +404,74 @@ div {
 	
 	function loop() {
 		
-		var elapsedTime =  (new Date()).getTime() - lastChangeTime; 
+		var now = Date.now();// || (new Date()).getTime());
+		var elapsedTime =   now - lastChangeTime; 
 		
 		if(elapsedTime>=nextChangeTime) {
 			
+			
+			// check elapsed time to make sure it's not screwed up
+			
+			if((currentDigit == "0") && doubleDigit) {
+				if(elapsedTime < shortestLongBlack) {
+					shortestLongBlack = elapsedTime; 
+					log("shortestLongBlack : ", shortestLongBlack);
+				}
+				if(elapsedTime > longestShortBlack) {
+					reset(); 
+				}
+			} else if((currentDigit =="0") &&!doubleDigit) {
+				
+				if(elapsedTime > longestShortBlack) {
+					longestShortBlack = elapsedTime; 
+					log("longestShortBlack : ", longestShortBlack);
+				}
+				if(elapsedTime < shortestLongBlack) {
+					reset(); 
+				}	
+			} else if((currentDigit == "1") && doubleDigit) {
+				if(elapsedTime < shortestLongWhite) {
+					shortestLongWhite = elapsedTime; 
+					log("shortestLongWhite : ", shortestLongWhite);
+				}
+				if(elapsedTime > longestShortWhite) {
+					reset(); 
+				}
+			}else if((currentDigit =="1") &&!doubleDigit) {
+
+				if(elapsedTime > longestShortWhite) {
+					longestShortWhite = elapsedTime; 
+				}
+				if(elapsedTime < shortestLongWhite) {
+					reset(); 
+				}
+			}
+				
 			// get next digit and set the next changetime
-			currentBroadcastDigit ++; 
+			currentBroadcastDigitIndex ++; 
 			
-			if(currentBroadcastDigit>code.length) currentBroadcastDigit = 0; 
+			// if we're at the end, restart. 
+			if(currentBroadcastDigitIndex>code.length) currentBroadcastDigitIndex = 0; 
 			
-			var doubleDigit = false; 
 			
-			var digit = code[currentBroadcastDigit]; 
-			if((currentBroadcastDigit<code.length-1) && ( digit == code[currentBroadcastDigit+1])) {
-				currentBroadcastDigit++; 
+			
+			// get the next bit to broadcast, 0 or 1
+			var digit = currentDigit = code[currentBroadcastDigitIndex]; 
+			
+			// and if there are two in a row, let's make it a double!
+			if((currentBroadcastDigitIndex<code.length-1) && ( digit == code[currentBroadcastDigitIndex+1])) {
+				currentBroadcastDigitIndex++; 
 				doubleDigit = true; 
+			} else {		
+				doubleDigit = false; 
 			}
 			
 			var framelength = 1000 / frameRate;
-			lastChangeTime += elapsedTime -(elapsedTime - nextChangeTime); 
+			//lastChangeTime += elapsedTime -(elapsedTime - nextChangeTime); 
+			lastChangeTime = now; 
 			nextChangeTime = framelength; 
 			if(doubleDigit) nextChangeTime*=doubleToSingleRatio; 
-			if(digit=="0") nextChangeTime += (framelength*blackTimeOffset); 
+			if(digit=="0") nextChangeTime += blackTimeOffset; 
 			
 			
 			if(digit == "1") { 
@@ -442,7 +515,10 @@ div {
 	function reset() { 
 		startTime = (new Date()).getTime(); 
 		currentFrame =0; 
-		
+		longestShortBlack = 0; 
+		shortestLongBlack = Number.MAX_VALUE;
+		longestShortWhite = 0; 
+		shortestLongWhite = Number.MAX_VALUE;
 	}
 	
 	
@@ -481,7 +557,7 @@ div {
 				checksum +=binaryString[i]; 
 			}
 		}
-		console.log(binaryString + " "+ checksum); 
+		log(binaryString + " "+ checksum); 
 			
 		if(blackGaps)
 			return "1"+binaryString+checksum+"0"; 

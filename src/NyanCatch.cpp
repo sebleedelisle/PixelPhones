@@ -80,8 +80,8 @@ void NyanCatch::update() {
 					cphone->sendColour(ofColor(0,255,255), phone->displayCatTime+speed-timer);
 					
 					phone->startMessageSent = true; 
-					
-					catTargetPos.set(cphone->unitPosition); 
+					// NOTE - should make sure this matches resolution
+					catTargetPos.set(cphone->unitPosition*ofPoint(640,480)); 
 				}
 				
 				
@@ -103,8 +103,10 @@ void NyanCatch::update() {
 						
 						if(!phone->catCaught) {
 							phone->touchTime = (touchTime - phone->displayCatTime);
-							cphone->sendMsg("p:nyc|caught|"+ofToString(phone->touchTime)); 
-							phone->catCaught = true; 
+							if((phone->touchTime>0) && (phone->touchTime<speed)) { 
+								cphone->sendMsg("p:nyc|caught|"+ofToString(phone->touchTime)); 
+								phone->catCaught = true;
+							}
 						}
 					} 
 					
@@ -136,6 +138,8 @@ void NyanCatch::update() {
 
 void NyanCatch :: draw() { 
 	
+	bool updatePhysics = (ofGetElapsedTimeMillis()-lastUpdate >16) ;
+		
 	if(gameState == NYAN_STATE_OVER ) { 
 		
 		int y = 200; 
@@ -166,17 +170,20 @@ void NyanCatch :: draw() {
 		
 		
 	}
-	catVel*=0.91; 
-	
-	catVel += (catTargetPos-catPos)*0.01; 
-	catPos+=catVel; 
+	if(updatePhysics) {
+		catVel*=0.96; 
+		
+		catVel += (catTargetPos-catPos)*0.1; 
+		catPos+=catVel; 
+		lastUpdate = ofGetElapsedTimeMillis(); 
+	}
 	
 	if(catImage!=NULL) {
 		ofSetColor(255); 
 		ofEnableAlphaBlending(); 
 		ofPushMatrix(); 
 		ofTranslate(catPos.x, catPos.y); 
-		float scale = (catVel.length()*0.1)+1;
+		float scale = 1;//(catVel.length()*0.1)+1;
 		ofScale(scale,scale); 
 		ofTranslate(-catImage->width/2, -catImage->height); 
 		catImage->draw(0, 0); 
@@ -211,7 +218,7 @@ void NyanCatch::startGame() {
 				phone->displayCatTime = gameStartTime + ( counter* catInterval); 
 				phone->connectedPhone->sendMsg("p:nyc|reset"); 
 				
-				cout << counter << " phone " <<phone->connectedPhone->ID << " " <<phone->displayCatTime<<"\n";
+				//cout << counter << " phone " <<phone->connectedPhone->ID << " " <<phone->displayCatTime<<"\n";
 			
 				counter ++;
 			}
@@ -226,11 +233,11 @@ void NyanCatch::startGame() {
 	// game ends 5 secs after all the cats have gawn. 
 	gameEndTime = gameStartTime + (nyanCatchPhones.size()* catInterval) + 2000; 
 	
-	cout << "gameEndTime = " << gameEndTime << " " << (gameEndTime - gameStartTime) << "\n";
+	//cout << "gameEndTime = " << gameEndTime << " " << (gameEndTime - gameStartTime) << "\n";
 	
 	
-	nyanSound.setLoop(true);
-	nyanSound.play(); 
+	//nyanSound.setLoop(true);
+	//nyanSound.play(); 
 	
 	catPos.set(0,0); 
 	catTargetPos.set(catPos); 

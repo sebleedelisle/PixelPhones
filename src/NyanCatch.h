@@ -51,13 +51,14 @@ class NyanCatch : public OutputEffect {
 	
 	int speed; 
 	int catInterval; 
-	bool onlyUseFoundPhones;
+	//bool onlyUseFoundPhones;
 	
 	ofPoint catPos; 
 	ofPoint catTargetPos; 
 	ofPoint catVel; 
 	
 	ofImage * catImage;
+	int lastUpdate; 
 	
 
 }; 

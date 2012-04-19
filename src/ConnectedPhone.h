@@ -25,7 +25,7 @@ class ConnectedPhone  {
 	void draw(int brightness, int vidWidth, int vidHeight); 
 	
 	void sendColour(ofColor col, int latency = 0, float fadeUp = 0, float fadeDown = 0) ;
-	void sendFrameRate(int framerate); 
+	void sendFrameRate(int framerate, float doubleToSingleRatio, int blackTimeOffset); 
 	void sendNumBits(int numbits); 
 	
 	void sendMsg(string msg) ;
@@ -53,7 +53,8 @@ class ConnectedPhone  {
 	bool found; 
 	bool connectionReady; 
 	//ofVec2f pixelPosition;
-	ofVec2f unitPosition;
+	ofPoint unitPosition;
+	ofPoint warpedPosition; 
 	int ID; 
 	
 	int counter; 

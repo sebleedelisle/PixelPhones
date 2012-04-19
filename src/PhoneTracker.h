@@ -25,18 +25,13 @@ class PhoneTracker {
 	
 	bool doRectanglesIntersect(ofRectangle * rect1, ofRectangle * rect2); 
 	
-	//need to add vector of found phone ids
-	
-	
-	// we don't actually use these
-	// just checking to see if they
-	// all work in the same place :)
-	
 	ofxCvColorImage cvColour; 
 	ofxCvColorImage cvVideo; 
+    //ofxCvShortImage cvThreshold; 
 	ofxCvGrayscaleImage cvGrey;
 	ofxCvGrayscaleImage cvGreyPrevious; 
 	ofxCvGrayscaleImage cvDiff; 
+    ofxCvGrayscaleImage cvDiffBlended; 
 	ofxCvContourFinder 	contourFinder;
 	
 	CameraManager cameraManager; 
@@ -65,6 +60,7 @@ class PhoneTracker {
 	int phoneFrameRate; 
 	int numBits; 
 	float gapNumFrames; 
+
 	
 	list <TrackedBlob*> trackedBlobs; 
 	vector <TrackedBlob*> spareTrackedBlobs; 
@@ -74,8 +70,12 @@ class PhoneTracker {
 	
 	bool updateVideo; 
 	bool updateDiff;
+    int diffSkipFrames; 
+    float doubleToSingleRatio;
+    int frameCounter;
 	bool broadcasting; 
-	
+	bool showTrails;
+    
 	bool flipX; 
 	bool flipY; 
 	

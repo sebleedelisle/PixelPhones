@@ -28,11 +28,12 @@ class CommsManager {
 	void sendAllPhonesColour(ofColor col); 
 	void startBroadcastingIDs(); 
 	void stopBroadcastingIDs(ConnectedPhone * exceptThisOne = NULL); 
-	void setFrameRate(int rate); 
+	void setFrameRate(int rate, float doubleToSingleRatio, int blackTimeOffset); 
 	void setNumBits(int numbits); 
 	void foundPhones(vector <FoundPhone *> phones, int vidWidth, int vidHeight); 
 	
 	void resetPhones(); 
+	void updateWarpPoints( ofPoint points[4], int w, int h); 
 	
 	void mousePressed(int x, int y, int button); 
 	void mouseReleased(int x, int y, int button); 
@@ -43,12 +44,25 @@ class CommsManager {
 	vector <ConnectedPhone *>  disconnectedPhones;
 	bool broadcastingIDs; 
 	bool syncing; 
+    bool showPositions; 
 	int numConcurrentSyncs; 
 	int portNum; 
 	int numBits; 
-	int frameRate; 
+	int phoneFrameRate; 
+    float doubleToSingleRatio; 
+    int blackTimeOffset; 
+    
 	int posBrightness; 
 	ofTrueTypeFont labelFont; 
 	
 	ofFbo labelFbo; 
+
+	ofPoint			sourcePoints[4];
+	ofPoint			unitSourcePoints[4];
+	ofPoint			destPoints[4];
+	ofMatrix4x4     warpMatrix; 
+	
+
+
+
 };

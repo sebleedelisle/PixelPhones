@@ -143,7 +143,9 @@ void ConnectedPhone::draw(int brightness, int vidWidth, int vidHeight) {
 	
 	ofPushMatrix(); 
 	
+	//ofTranslate( (int)(warpedPosition.x*vidWidth), (int)(warpedPosition.y*vidHeight));
 	ofTranslate( (int)(unitPosition.x*vidWidth), (int)(unitPosition.y*vidHeight));
+	
 	if(found) ofSetColor(0,brightness, 0); 
 	else ofSetColor((int)(brightness/2)); 
 	
@@ -197,9 +199,12 @@ void ConnectedPhone::sendColour(ofColor col, int latency, float fadeUp, float fa
 	currentColour = col; 
 
 }
-void ConnectedPhone::sendFrameRate(int framerate) { 
+void ConnectedPhone::sendFrameRate(int framerate, float doubleToSingleRatio, int blackTimeOffset) { 
 	
 	sendMsg("f"+ofToString(framerate));
+    sendMsg("r"+ofToString(doubleToSingleRatio)); 
+    sendMsg("o"+ofToString(blackTimeOffset)); 
+    
 	
 }
 
@@ -221,7 +226,7 @@ void ConnectedPhone::sendMsg(string msg) {
 void ConnectedPhone::broadcastID() { 
 	if(!broadcastingID) {
 		// make white flash that we can pick up in our camera!
-		sendColour(ofColor(255,255,255));
+		//sendColour(ofColor(255,255,255));
 		sendMsg("b1"); 
 	}
 	broadcastingID = true; 
@@ -286,7 +291,7 @@ bool ConnectedPhone ::hitTest(int x,int y) {
 }
 
 void ConnectedPhone :: startDragging(int x, int y) { 
-	if(!isDragging); 
+	//if(!isDragging); 
 	isDragging = true; 
 	//dragOffset.set(x-pixelPosition.x, y-pixelPosition.y); 
 	found = !found; 
@@ -294,7 +299,7 @@ void ConnectedPhone :: startDragging(int x, int y) {
 }
 
 void ConnectedPhone :: stopDragging() { 
-	if(isDragging); 
+	//if(isDragging); 
 	isDragging = false; 
 	//found = true; 
 	

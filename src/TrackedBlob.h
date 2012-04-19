@@ -19,10 +19,10 @@ class TrackedBlob {
 
 	public : 
 	TrackedBlob() ;
-	void update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, vector<ofPoint *> * otherPoints = NULL); 
+	void update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, bool updateTrails, vector<ofPoint *> * otherPoints = NULL); 
 	void updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, float vidScale); 
 	void reset() ; 
-	void draw(int vidwidth, int vidheight) ; 
+	void draw(int vidwidth, int vidheight, bool showTrails) ; 
 	int getID(float threshold = 0.5); 
 //	int decodeManchesterString(string * code);
 //	bool vectorContainsInt(vector <int> * vec, int num);

@@ -108,7 +108,7 @@ int TrackedBlobData::getID(float bwthreshold) {
 	if(pulseLengths.back()->isBlack()) pulseLengths.pop_back(); 
 	
 	
-	// make two arrays - one for all the zeros' lengths and one for all the ones' lengths
+	// make two vectors - one for all the zeros' lengths and one for all the ones' lengths
 	vector <float> zeroLengths; 
 	vector <float> oneLengths; 
 	
@@ -117,17 +117,13 @@ int TrackedBlobData::getID(float bwthreshold) {
 		
 		pulseData = pulseLengths[i]; 
 		
-		//cout << i <<" isBlack : " << pulseData->isBlack() << " len " << pulseData->length << "\n";
-		//if(pulseData->isBlack()) zeroLengths.push_back(pulseData->length); 
-		//else oneLengths.push_back(pulseData->length); 
-		
-		// which list do we use? 
+        // which list do we use? 
 		vector <float> * vec = (pulseData->isBlack()) ? &zeroLengths : &oneLengths; 
 		
 		// if we don't already have that number, add it into the vector
-		//if(std::find(vec->begin(), vec->end(), pulseData->length) == vec->end()) {
+		if(std::find(vec->begin(), vec->end(), pulseData->length) == vec->end()) {
 			vec->push_back(pulseData->length); 
-		//}
+		}
 		
 	}
 	
@@ -151,8 +147,11 @@ int TrackedBlobData::getID(float bwthreshold) {
 	int totalBitCount = (numBits*4) + 4; 
 	
 #endif
+    
+    // an array to store the solution in
+    //bool solution[totalBitCount]; 
+    
 	//iterate through all the zeroLengths
-	
 	for(int i = 0 ; i<=zeroLengths.size(); i++) { 
 		
 		zeroThreshold = (i<zeroLengths.size()) ? zeroLengths[i] : FLT_MAX; 
@@ -178,7 +177,6 @@ int TrackedBlobData::getID(float bwthreshold) {
 				string digitchar = ofToString(coldata->bit); 
 				
 				solution += (coldata->length < threshold) ? digitchar : digitchar+digitchar; 
-				
 				
 			}	
 			
@@ -244,7 +242,7 @@ int TrackedBlobData::decodeManchesterString(string * code) {
 		int bit2 = (str[i+1]=='0')? 0 : 1; 
 		
 		// two bits the same! not a valid pair
-		if(bit1^bit2 == 0)  return -1; 
+		if((bit1^bit2) == 0)  return -1; 
 		
 		decoded.push_back( bit1); 
 		

@@ -21,7 +21,7 @@ TrackedBlob::TrackedBlob() {
 	reset(); 
 	
 }
-void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, vector<ofPoint *> * otherPoints) {
+void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, bool updateTrails, vector<ofPoint *> * otherPoints) {
 	if(!enabled) return; 
 	lifeExpectancy = gapNumFrames; 
 	//numBits = numbits; 
@@ -64,7 +64,7 @@ void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBet
 	if(pixelCount<trackedPixels.width) {
 		trackedPixels.setColor(pixelCount, 0, col);
 		
-		//trackedPixels.update(); 
+		if(updateTrails) trackedPixels.update(); 
 		
 		
 	}
@@ -72,12 +72,11 @@ void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBet
 	
 }
 
-void TrackedBlob::draw(int vidwidth, int vidheight) { 
+void TrackedBlob::draw(int vidwidth, int vidheight, bool showTrails) { 
 	if(!enabled) return; 
 	
 	
-	ofEnableBlendMode(OF_BLENDMODE_ADD);
-
+	
 	
 	ofNoFill(); 
 	ofSetLineWidth(1);
@@ -90,11 +89,12 @@ void TrackedBlob::draw(int vidwidth, int vidheight) {
 	ofRect(data->boundingRect); 
 	ofPopMatrix(); 
 
-//	ofSetColor(255); 
-//	trackedPixels.draw(labelCentre.x-pixelCount, labelCentre.y);
-
-	ofDisableBlendMode();
-	
+    if(showTrails) {
+        ofSetColor(255); 
+       
+        trackedPixels.draw(labelCentre.x-pixelCount, labelCentre.y);
+    }
+ 	
 }
 
 void TrackedBlob::updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, float vidScale) { 

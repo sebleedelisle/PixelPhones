@@ -42,6 +42,11 @@ class testApp : public ofBaseApp{
 	int phoneFrameRate; 
 	int numBits; 
 	int numBitsMin; 
+    float doubleToSingleRatio; 
+    int blackTimeOffset; 
+	
+	ofPoint warpPoints[4];
+
 	
 	PhoneTracker phoneTracker;
 	CommsManager commsManager; 

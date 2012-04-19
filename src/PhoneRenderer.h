@@ -7,7 +7,6 @@
  *
  */
 
-
 #pragma once
 #include "CommsManager.h"
 #include "PacmanEffect.h"
@@ -19,6 +18,7 @@
 #include "ofxSimpleGuiToo.h"
 #include "ParticleWoosh.h"
 
+
 class PhoneRenderer { 
 
 	public : 
@@ -29,8 +29,9 @@ class PhoneRenderer {
 	void update(); 
 	void draw(); 
 	void updatePhonesWithFBO( ofFbo * fbo) ;
-	
+	void addProgram( OutputEffect * program) ; 
 	void changeProgram(int programnum); 
+	void clearPhones(); 
 	
 	void initGui(ofxSimpleGuiToo * gui); 
 	
@@ -54,6 +55,7 @@ class PhoneRenderer {
 	ParticleWoosh * particleWoosh; 
 	
 	bool startProgramSwitch;
+	bool onlyUseFoundPhones; 
 	//bool programRunning; 
 	
 	ofFbo 	currentProgramFbo;

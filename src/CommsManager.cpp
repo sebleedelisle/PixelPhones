@@ -8,11 +8,20 @@
  */
 
 #include "CommsManager.h"
+#include "homography.h"
 
 CommsManager::CommsManager() { 
 	
 	broadcastingIDs = false; 
 	labelFbo.allocate(20, 20, GL_RGBA, 0);
+
+	destPoints[0].set(0, 0, 0);
+	destPoints[1].set(1, 0, 0);
+	destPoints[2].set(1, 1, 0);
+	destPoints[3].set(0, 1, 0);
+	
+	
+
 }
 
 
@@ -82,7 +91,11 @@ void CommsManager::update(){
 				
 				phone->setup(websocketclient, id); 
 				phone->sendNumBits(numBits);
-				phone->sendFrameRate(frameRate);
+				phone->sendFrameRate(phoneFrameRate, doubleToSingleRatio, blackTimeOffset);
+				phone->unitPosition.set(ofMap(i%10, 0,10,0.2,0.8), ofMap(floor(i/10.0),0,10,0.2,0.8));
+				phone->warpedPosition = phone->unitPosition;
+				
+				cout << "pos "<< phone->unitPosition <<"\n";
 				
 				if(broadcastingIDs) phone->broadcastID(); 
 
@@ -171,7 +184,7 @@ void CommsManager::draw(int vidWidth, int vidHeight) {
 
 	ofPushMatrix(); 
 	ofTranslate( ofGetWidth()/2 - vidWidth/2,  ofGetHeight()/2 - vidHeight/2 );
-	if(posBrightness>0) {
+	if(showPositions && (posBrightness>0)) {
 		map<int,ConnectedPhone*>::iterator phoneit;
 		
 		for(phoneit=connectedPhones.begin(); phoneit!=connectedPhones.end(); phoneit++){
@@ -245,13 +258,15 @@ void CommsManager::sendAllPhonesColour(ofColor col) {
 	}
 }
 
-void CommsManager::setFrameRate(int rate) {
+void CommsManager::setFrameRate(int rate, float doubletosingleratio, int blacktimeoffset) {
 	
-	frameRate = rate; 
+	phoneFrameRate = rate; 
+    doubleToSingleRatio = doubletosingleratio; 
+    blackTimeOffset = blacktimeoffset; 
 	
 	for(map<int, ConnectedPhone *>::iterator it=connectedPhones.begin(); it!=connectedPhones.end(); it++){
 		ConnectedPhone	* connectedPhone = it->second; 
-		connectedPhone->sendFrameRate(rate); 
+		connectedPhone->sendFrameRate(rate, doubleToSingleRatio, blackTimeOffset); 
 		
 	}		
 	
@@ -297,11 +312,12 @@ void CommsManager::foundPhones(vector <FoundPhone *> phones, int vidWidth, int v
 			if(cphone->ID == phone->ID) {
 				cphone->unitPosition.set(phone->unitPosition);
 				//cphone->pixelPosition.set(cphone->unitPosition.x * ofGetWidth(), cphone->unitPosition.y * ofGetHeight()); 
+				cphone->warpedPosition = warpMatrix * cphone->unitPosition; 
 				
 				cphone->stopBroadcastingID(); 
 				cphone->found = true; 
 		
-				cout<< "Found phone "<< cphone->ID << " " << phone->ID << " " << cphone->unitPosition.x << " " << cphone->unitPosition.y << "\n"; 
+				//cout<< "Found phone "<< cphone->ID << " " << phone->ID << " " << cphone->unitPosition.x << " " << cphone->unitPosition.y << "\n"; 
 								
 				
 			}
@@ -311,6 +327,40 @@ void CommsManager::foundPhones(vector <FoundPhone *> phones, int vidWidth, int v
 	}
 	
 }
+
+
+
+void CommsManager :: updateWarpPoints( ofPoint points[4], int w, int h){
+	
+	for(int i=0; i<4;i++) { 
+		sourcePoints[i] = points[i]; 
+		//sourcePoints[i].z = 0; 
+		unitSourcePoints[i].x = points[i].x/(float)w; 
+		unitSourcePoints[i].y = points[i].y/(float)h; 
+		unitSourcePoints[i].z = 0; 
+	}
+	// NOW UPDATE MATRIX
+	
+	warpMatrix = findHomography(unitSourcePoints, destPoints);
+	
+		
+	
+	map<int, ConnectedPhone*> :: iterator it = connectedPhones.begin();
+	
+	while(it!=connectedPhones.end()) { 
+		
+		ConnectedPhone * phone = it->second; 
+		
+	
+		//if(phone->found) { 
+			phone->warpedPosition = warpMatrix * phone->unitPosition; 
+		//}
+				
+		it++;
+	}
+		
+}
+		
 
 
 void CommsManager::mousePressed(int x, int y, int button) { 
