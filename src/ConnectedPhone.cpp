@@ -13,6 +13,8 @@ ConnectedPhone::ConnectedPhone(ofFbo * labelfbo) {
 	
 	labelFbo = labelfbo; 
 	labelImage.allocate(labelfbo->getWidth(), labelfbo->getHeight(), OF_IMAGE_COLOR_ALPHA);
+    unitPosition.set(0,0); 
+    warpedPosition.set(0,0); 
 	
 }
 
@@ -143,8 +145,8 @@ void ConnectedPhone::draw(int brightness, int vidWidth, int vidHeight) {
 	
 	ofPushMatrix(); 
 	
-	//ofTranslate( (int)(warpedPosition.x*vidWidth), (int)(warpedPosition.y*vidHeight));
-	ofTranslate( (int)(unitPosition.x*vidWidth), (int)(unitPosition.y*vidHeight));
+	ofTranslate( (int)(warpedPosition.x*vidWidth), (int)(warpedPosition.y*vidHeight));
+	//ofTranslate( (int)(unitPosition.x*vidWidth), (int)(unitPosition.y*vidHeight));
 	
 	if(found) ofSetColor(0,brightness, 0); 
 	else ofSetColor((int)(brightness/2)); 
@@ -253,6 +255,16 @@ void ConnectedPhone::sendQueue() {
 	}
 }
 	
+void ConnectedPhone:: updateWarpedPosition(ofMatrix4x4 warpMatrix){
+    
+    warpedPosition =  warpMatrix * unitPosition; 
+    if(isnan(warpedPosition.x)) { 
+        cout << "warped position corrupt! "<< unitPosition << "\n"<<warpMatrix <<"\n"; 
+        warpedPosition = unitPosition; 
+    }
+}
+
+
 bool ConnectedPhone::isConnected() {
 	return tcp->isClientConnected(ID);
 }

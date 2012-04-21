@@ -19,9 +19,10 @@ PhoneRenderer:: PhoneRenderer() {
 	addProgram(new RainbowEffect(w,h)); 
 	//
 	addProgram(stripesEffect = new StripesEffect(w,h)); 
+    addProgram(particleWoosh = new ParticleWoosh(w,h)); 
 	addProgram(pacmanEffect = new PacmanEffect(w,h)); 
 	addProgram(nyanCatch = new NyanCatch()); 
-	addProgram(particleWoosh = new ParticleWoosh(w,h)); 
+    addProgram(plasmaEffect = new PlasmaEffect(w,h)); 
 	
 	
 
@@ -114,8 +115,8 @@ void PhoneRenderer :: updatePhonesWithFBO( ofFbo * fbo) {
 		if((!onlyUseFoundPhones) || phone->found) {
 			
 			
-			
-			ofColor col = pixels.getColor(phone->warpedPosition.x * fbo->getWidth(), phone->warpedPosition.y* fbo->getHeight()); 
+			cout << "warpedPosition : " << phone->warpedPosition << "\n";
+			ofColor col = pixels.getColor(ofMap(phone->warpedPosition.x,0,1,0, fbo->getWidth(),true), ofMap(phone->warpedPosition.y,0,1,0, fbo->getHeight(),true)); 
 		
 			// NOW BROADCAST COLOUR TO PHONE! 
 		
@@ -238,7 +239,25 @@ void PhoneRenderer :: initGui(ofxSimpleGuiToo * gui){
 	gui->addSlider("speed", particleWoosh->speed, 0.1, 20).setSize(200,30);
 	gui->addSlider("size", particleWoosh->size, 0, 30).setSize(200,30);
 	gui->addSlider("fade", particleWoosh->fade, 0, 255).setSize(200,30);
-	
+
+	gui->addSlider("plasmaSpeed", plasmaEffect->speed, 0.1, 10).setNewColumn(true).setSize(200,30);
+	gui->addSlider("gen1", plasmaEffect->gen1, 0.1, 20).setSize(200,30);
+	gui->addSlider("gen2", plasmaEffect->gen2, 0.1, 20).setSize(200,30);
+	gui->addSlider("gen3", plasmaEffect->gen3, 0.1, 20).setSize(200,30);
+	gui->addSlider("gen4", plasmaEffect->gen4, 0.1, 20).setSize(200,30);
+	gui->addSlider("steps", plasmaEffect->steps, 0, 20).setSize(200,30);
+	gui->addSlider("hueOffset", plasmaEffect->hueOffset, 0, 255).setSize(200,30);
+	gui->addSlider("hueRange", plasmaEffect->hueRange, 0, 255).setSize(200,30);
+	gui->addSlider("brightnessOffset", plasmaEffect->brightnessOffset, 0, 255).setSize(200,30);
+	gui->addSlider("brightnessRange", plasmaEffect->brightnessRange, 0, 255).setSize(200,30);
+	gui->addSlider("saturation", plasmaEffect->saturation, 0, 255).setSize(200,30);
+
+    gui->addPage("PhoneRenderer2");
+    
+    gui->addToggle("Program Running", startProgramSwitch );	
+	gui->addSlider("Current Program", currentProgramIndex, 0, outputPrograms.size()-1);
+	gui->addSlider("latency", latency, 0, 3000).setSize(200,30);
+	gui->addToggle("Only use found phones", onlyUseFoundPhones).setSize(200,30); 
 
 	gui->addToggle("Start Nyan", nyanCatch->gameStartSwitch).setNewColumn(true).setSize(200,30); 
 	gui->addSlider("Nyan Speed", nyanCatch->speed, 200,3000).setSize(200,30); 

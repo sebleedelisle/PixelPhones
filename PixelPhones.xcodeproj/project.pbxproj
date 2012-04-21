@@ -68,6 +68,7 @@
 		96EBD2EC13ED9672003F5F48 /* ConnectedPhone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E513ED9672003F5F48 /* ConnectedPhone.cpp */; };
 		96EBD2ED13ED9672003F5F48 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E713ED9672003F5F48 /* md5.c */; };
 		96EBD2EE13ED9672003F5F48 /* WebSocketClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E913ED9672003F5F48 /* WebSocketClient.cpp */; };
+		96F1AC721543552B008954F0 /* PlasmaEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F1AC711543552B008954F0 /* PlasmaEffect.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -213,7 +214,7 @@
 		9645CC1514050C3700BFBB0C /* IDPulseData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDPulseData.cpp; sourceTree = "<group>"; };
 		964E1EB81413BD0F00E9C1F2 /* StrokeOrPoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeOrPoke.h; sourceTree = "<group>"; };
 		964E1EB91413BD0F00E9C1F2 /* StrokeOrPoke.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StrokeOrPoke.cpp; sourceTree = "<group>"; };
-		964E1EEB1413C55D00E9C1F2 /* SOPDatum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOPDatum.h; sourceTree = "<group>"; };
+		964E1EEB1413C55D00E9C1F2 /* SOPData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOPData.h; sourceTree = "<group>"; };
 		967919321402BA1D00616DA1 /* OutputEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputEffect.h; sourceTree = "<group>"; };
 		967930D81512836C00F201F3 /* CameraManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraManager.h; sourceTree = "<group>"; };
 		967930D91512836C00F201F3 /* CameraManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraManager.cpp; sourceTree = "<group>"; };
@@ -272,6 +273,8 @@
 		96EBD2E813ED9672003F5F48 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
 		96EBD2E913ED9672003F5F48 /* WebSocketClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketClient.cpp; sourceTree = "<group>"; };
 		96EBD2EA13ED9672003F5F48 /* WebSocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketClient.h; sourceTree = "<group>"; };
+		96F1AC711543552B008954F0 /* PlasmaEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlasmaEffect.cpp; sourceTree = "<group>"; };
+		96F1AC731543553E008954F0 /* PlasmaEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlasmaEffect.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -630,6 +633,8 @@
 				9693E9C4141EEA15004C5ED9 /* ParticleWoosh.cpp */,
 				960D30FA1403D58F0039A296 /* StripesEffect.h */,
 				960D30FB1403D58F0039A296 /* StripesEffect.cpp */,
+				96F1AC731543553E008954F0 /* PlasmaEffect.h */,
+				96F1AC711543552B008954F0 /* PlasmaEffect.cpp */,
 				967919321402BA1D00616DA1 /* OutputEffect.h */,
 				963B298A152C6EA300658F0F /* OutputEffect.cpp */,
 				960D30BE1403CFEA0039A296 /* PacmanEffect.h */,
@@ -639,7 +644,7 @@
 				9614C51C141A44D900AFE637 /* NyanCatchPhone.h */,
 				964E1EB81413BD0F00E9C1F2 /* StrokeOrPoke.h */,
 				964E1EB91413BD0F00E9C1F2 /* StrokeOrPoke.cpp */,
-				964E1EEB1413C55D00E9C1F2 /* SOPDatum.h */,
+				964E1EEB1413C55D00E9C1F2 /* SOPData.h */,
 			);
 			name = Effects;
 			sourceTree = "<group>";
@@ -983,6 +988,7 @@
 				962F2B091513C4A900AB7C53 /* CameraVidGrabber.cpp in Sources */,
 				963B2813152B75F400658F0F /* ofxMSAInteractiveObject.cpp in Sources */,
 				963B298B152C6EA300658F0F /* OutputEffect.cpp in Sources */,
+				96F1AC721543552B008954F0 /* PlasmaEffect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

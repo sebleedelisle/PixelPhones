@@ -111,7 +111,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 			// gapNumFrames is the number of missing frames before we reset the colour reading. 
 			// the phones will leave 6 blank frames in, so any more than four should be safe as a
 			// trigger. 
-			gapNumFrames = ((float)videoFrameRate / (float)phoneFrameRate)*5*doubleToSingleRatio;
+			gapNumFrames = ((float)videoFrameRate / (float)phoneFrameRate)*5;//*doubleToSingleRatio;
 
 			//unsigned char * vidPix = vidGrabber.getPixels();
 			

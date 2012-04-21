@@ -265,7 +265,12 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void testApp::exit() { 
-	commsManager.TCP.close(); 
+	if(commsManager.TCP.close()) { 
+        cout << "server closed\n";
+    } else { 
+        cout << "server failed to close :( \n";
+        
+    }
 	
 	//phoneTracker.vidGrabber.close(); 
 	//phoneTracker.libdcCamera.close(); 

@@ -17,6 +17,7 @@
 #include "NyanCatch.h"
 #include "ofxSimpleGuiToo.h"
 #include "ParticleWoosh.h"
+#include "PlasmaEffect.h"
 
 
 class PhoneRenderer { 
@@ -53,6 +54,7 @@ class PhoneRenderer {
 	//StrokeOrPoke * strokeOrPoke; 
 	NyanCatch * nyanCatch; 
 	ParticleWoosh * particleWoosh; 
+    PlasmaEffect * plasmaEffect; 
 	
 	bool startProgramSwitch;
 	bool onlyUseFoundPhones; 

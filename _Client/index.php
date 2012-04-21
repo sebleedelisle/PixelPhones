@@ -21,7 +21,7 @@ div {
 	color:#444;
 	
 }
-.fullScreenImage { 
+.moveableImage { 
 	display:block;
 	position:absolute;
 	padding:0px;
@@ -91,12 +91,14 @@ div {
 	longestShortBlack = 0,
 	shortestLongBlack = Number.MAX_VALUE,
 	longestShortWhite = 0,
-	shortestLongWhite = Number.MAX_VALUE;
-	
+	shortestLongWhite = Number.MAX_VALUE, 
+	touchesDisabled = false;
 	
 	
 	window.addEventListener("load", init); 
 	window.addEventListener("beforeunload", onUnload); 
+	
+	document.body.addEventListener("touchstart", function(e){ if(touchesDisabled) e.preventDefault()});
 
 	function init(){
 
@@ -152,7 +154,7 @@ div {
 
 					var msgstr = msgs[i]; 
 					
-					console.log(msgstr);
+					log(msgstr);
 					if(msgstr.substring(0,1)=='c'){
 					
 						// CHANGE COLOUR MESSAGE : c<hexcolour>|f<fadespeed>|t<changeTime>
@@ -818,45 +820,47 @@ div {
 	
 	function NyanCatch() { 
 		
-		this.loopInterval; 
-		this.nyanImage; 
-		this.showTime; 
-		this.speed; 
-		this.caught; 
-		this.counter; 
-		this.msgDiv = document.createElement('div'); 
-		this.msgDiv.className = "largeTypeMessage"; 
+		var loopInterval, 
+			nyanImage,
+			showTime,
+			speed,
+			caught,
+			counter,
+			msgDiv = document.createElement('div');
+		
+		msgDiv.className = "largeTypeMessage"; 
 		
 		
 		this.start = function() { 
-			console.log("start nyan catch!"); 
-			if(!this.nyanImage) {
-				this.nyanImage = new Image();
-				this.nyanImage.onload = this.imageLoaded(); 
-				this.nyanImage.src = "nyc/poptart1red1.gif";
-				this.nyanImage.className = "fullScreenImage";
-				
+			log("start nyan catch!"); 
+			if(!nyanImage) {
+				nyanImage = new Image();
+				nyanImage.onload = imageLoaded; 
+				nyanImage.src = "nyc/nyanCat.gif";
+				nyanImage.className = "moveableImage";	
 			}
+			
 			
 			this.reset(); 
 			
-			var that = this; 
-			this.loopInterval = setInterval(function() {that.update.apply(that);}, 1000/60); 
-			changeColour("ff00bb"); 
+			
+			loopInterval = setInterval(update, 1000/60); 
+			changeColour("000066"); 
+			
 			
 		};
 		
 		
 		this.reset = function() {
 		
-			this.showTime = -1; 
-			this.speed = -1; 
-			this.caught = false;
-			this.counter = 0; 
-			this.msgDiv.width = SCREEN_WIDTH; 
-			this.msgDiv.style.top = "100px"; 
+			showTime = -1; 
+			speed = -1; 
+			caught = false;
+			counter = 0; 
+			msgDiv.width = SCREEN_WIDTH; 
+			msgDiv.style.top = "100px"; 
 			changeColour("0000ff"); 
-			this.removeDiv(); 
+			removeDiv(); 
 			
 			
 			
@@ -865,38 +869,42 @@ div {
 		
 		this.stop = function() { 
 			
-			clearInterval(this.loopInterval); 
-			this.removeCat(); 
-			this.removeDiv(); 
+			clearInterval(loopInterval); 
+			removeCat(); 
+			removeDiv(); 
 			changeColour("000000"); 
 		};
 		
 		
-		this.update = function() {
+		function update () {
 			
-			this.counter++; 
-		//	console.log("update", this); 
-			if(this.showTime<0) return;
+			counter++; 
+			//log("showTime", clock.getServerTime()-showTime); 
+			if(showTime<0) return;
 			var time = clock.getServerTime(); 
 			
-			var progress = (time - this.showTime) / this.speed; 
+			var progress = (time - showTime) / speed; 
 				
 			if((progress>=0) && (progress<=1)) {
-				this.showCat(); 
-				var distance = SCREEN_WIDTH + this.nyanImage.width; 
-				var progress = (time - this.showTime) / this.speed; 
-				this.nyanImage.style.left = ((progress * distance)-this.nyanImage.width)+"px"; 
-				//console.log("showing kitty at ", progress, (progress * distance)); 
-			} else this.removeCat(); 
+				showCat(); 
+				var distance = SCREEN_WIDTH + (nyanImage.width*2); 
+				var progress = (time - showTime) / speed; 
+				nyanImage.style.left = ((progress * distance)-nyanImage.width)+"px"; 
+				nyanImage.style.top = ((SCREEN_HEIGHT/2) - (nyanImage.height/2)) +"px";
+				//log("showing kitty at ", progress, (progress * distance)); 
+				touchesDisabled = true; 
+			} else {
+				removeCat(); 
+				touchesDisabled = false; 
+			}
 			
-			
-			if((this.caught) && (this.counter%10==0)) { 
+			if((caught) && (counter%10==0)) { 
 				
 				var col = Math.floor(Math.random()*6) +1;
 				var hex = ((col & 4)>0) ? 0xff0000 : 0x000000; 
 				hex = hex | (((col & 2)>0) ? 0x00ff00 : 0x000000);
 				hex = hex | (((col & 1)>0) ? 0x0000ff : 0x000000);
-				//console.log(hex.toString(16), col, col & 4, col & 2, col & 1); 
+				//log(hex.toString(16), col, col & 4, col & 2, col & 1); 
 				changeColour(hex.toString(16)); 
 				
 				
@@ -904,38 +912,39 @@ div {
 			
 		}
 		
-		this.showCat = function() { 
-			if(this.nyanImage.parentNode!=document.body) {
-				document.body.appendChild(this.nyanImage); 
+		function showCat () { 
+			//log("showCat", nyanImage)
+			if(nyanImage.parentNode!=document.body) {
+				document.body.appendChild(nyanImage); 
 				if(css3d) 
-					this.nyanImage.style.webkitTransform = "translateZ(0px)"; 
+					nyanImage.style.webkitTransform = "translateZ(0px)"; 
 				
 			}
 			
 			
 		}
 		
-		this.removeCat = function() { 			
-			if(this.nyanImage.parentNode == document.body)
-				document.body.removeChild(this.nyanImage);
+		function removeCat() { 			
+			if(nyanImage.parentNode == document.body)
+				document.body.removeChild(nyanImage);
 
 		};
-		this.removeDiv = function() { 			
-			if(this.msgDiv.parentNode == document.body)
-				document.body.removeChild(this.msgDiv);
+		function removeDiv () { 			
+			if(msgDiv.parentNode == document.body)
+				document.body.removeChild(msgDiv);
 
 		};
-		this.showMessage = function (msg) { 
-			this.msgDiv.innerHTML = msg; 
+		function showMessage(msg) { 
+			msgDiv.innerHTML = msg; 
 			
-			if(this.msgDiv.parentNode != document.body)
-				document.body.appendChild(this.msgDiv);
+			if(msgDiv.parentNode != document.body)
+				document.body.appendChild(msgDiv);
 			
 		}
 		
 		this.receiveMessage = function(msg) { 
 			
-			console.log(msg); 
+			log(msg); 
 			
 			if(msg.indexOf("reset")>-1) { 
 				
@@ -945,50 +954,50 @@ div {
 			else if(msg.indexOf("show")>-1){
 				var msg = msg.substr(msg.indexOf("show|")+5); 
 				var params = msg.split("|"); 
-				//console.log(msg); 
-				//console.log("showtime ", params[0],params[1]);
-				this.showTime = params[0]; 
-				this.speed = params[1]; 
+				//log(msg); 
+				log("showtime ", params[0],params[1]);
+				showTime = params[0]; 
+				speed = params[1]; 
 			
 			}
 			else if(msg.indexOf("caught")>-1){
 				var caughtTime = msg.substr(msg.indexOf("caught|")+7); 
 			 	changeColour("ff0000"); 
-				this.caught = true; 
+				caught = true; 
 			}
 			else if(msg.indexOf("place")>-1) { 
 				
 				var place = msg.substr(msg.indexOf("place|")+6); 
-				this.showMessage("You rank #"+(parseInt(place)+1)+"!!!!<br>YAY!"); 
+				showMessage("You rank #"+(parseInt(place)+1)+"!!!!<br>YAY!"); 
 				
 			} else if(msg.indexOf("missed")>-1) { 
 				
-				this.showMessage("You missed the kitty ;-("); 
+				showMessage("You missed the kitty ;-("); 
 				
 			}
 			
-		};
+		}
 		
 		
-		this.imageLoaded = function() { 
-			
+		function imageLoaded() { 
+			log('imageLoaded');
 			//document.body.appendChild(this.img);
-			var that = this; 
-			this.nyanImage.addEventListener("touchstart", function(e){ that.touchStart.call(that,e)});
-			this.nyanImage.addEventListener("mousedown", function(e){ that.mouseDown.call(that,e)});
+			//var that = this; 
+			nyanImage.addEventListener("touchstart", touchStart);
+			nyanImage.addEventListener("mousedown", mouseDown);
 			//this.img.addEventListener("touchmove", function(e){ that.touchMove.call(that,e)});
 			//this.img.addEventListener("touchend", function(e){ that.touchEnd.call(that,e)});
 			
 			//this.audioCheckInterval = setInterval(function(e){ that.checkAudio.call(that)}, 1);
 		//this.showCat(); 
-		};
+		}
 		
-		this.touchStart = function (e) { 
+		function touchStart(e) { 
 			e.preventDefault(); 
 			
 			for (var i=0;i<e.changedTouches.length;i++) { 
 				var touch = e.changedTouches[i]; 
-				//console.log(touch.identifier);
+				//log(touch.identifier);
 				
 				//this.touches[touch.identifier] = {
 				//	touchStartTime : new Date().getTime(),
@@ -1000,9 +1009,10 @@ div {
 				
 			}
 			
-		};
-		this.mouseDown = function (e) {
-			console.log("mouseDown"); 
+		}
+		
+		function mouseDown (e) {
+			log("mouseDown"); 
 			socket.send("p:catch|"+clock.getServerTime()); 
 			
 			

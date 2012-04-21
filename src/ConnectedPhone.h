@@ -27,6 +27,7 @@ class ConnectedPhone  {
 	void sendColour(ofColor col, int latency = 0, float fadeUp = 0, float fadeDown = 0) ;
 	void sendFrameRate(int framerate, float doubleToSingleRatio, int blackTimeOffset); 
 	void sendNumBits(int numbits); 
+    void updateWarpedPosition(ofMatrix4x4 warpMatrix);
 	
 	void sendMsg(string msg) ;
 	void broadcastID() ; 

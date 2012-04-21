@@ -24,10 +24,10 @@ void StrokeOrPoke :: draw() {
 		if(sopData.find(connectedPhone) == sopData.end() ) {
 			
 			if(connectedPhone->isConnected()) {
-				/// make a new SOPDatum!
+				/// make a new SOPData!
 				cout << "making a new SOPDatum for id : " << connectedPhone->ID <<"\n";
 				sopData[connectedPhone];
-				SOPDatum * sopdatum = &(sopData[connectedPhone]); 
+				SOPData * sopdatum = &(sopData[connectedPhone]); 
 				sopdatum->phone = connectedPhone; 
 				
 				connectedPhone->sendMsg("p:sop|start"); 
@@ -37,7 +37,7 @@ void StrokeOrPoke :: draw() {
 			
 		}
 				
-		SOPDatum * sopdatum = &(sopData[connectedPhone]); 
+		SOPData * sopdatum = &(sopData[connectedPhone]); 
 		
 		while(connectedPhone->programMessages.size()>0) {
 			// we have program messages! 
@@ -77,7 +77,7 @@ void StrokeOrPoke :: draw() {
 		
 	}
 	
-	map<ConnectedPhone *, SOPDatum>::iterator sopit = sopData.begin();
+	map<ConnectedPhone *, SOPData>::iterator sopit = sopData.begin();
 
 	while(sopit!=sopData.end()) {
 		
@@ -130,14 +130,14 @@ void StrokeOrPoke::notifyTopPoker() {
 	
 	if(sopData.size()==0) return; 
 	
-	map<ConnectedPhone *, SOPDatum>::iterator sopit = sopData.begin();
+	map<ConnectedPhone *, SOPData>::iterator sopit = sopData.begin();
 	
 	int pokeCount = -1; 
 	ConnectedPhone * phone; 
 	
 	while(sopit!=sopData.end()) {
 		
-		SOPDatum * sopdata = &(sopit->second); 
+		SOPData * sopdata = &(sopit->second); 
 		
 		if(sopdata->pokeCount > pokeCount) { 
 			pokeCount = sopdata->pokeCount; 
@@ -157,14 +157,14 @@ void StrokeOrPoke::notifyTopStroker() {
 	
 	if(sopData.size()==0) return; 
 	
-	map<ConnectedPhone *, SOPDatum>::iterator sopit = sopData.begin();
+	map<ConnectedPhone *, SOPData>::iterator sopit = sopData.begin();
 	
 	int strokeCount = -1; 
 	ConnectedPhone * phone; 
 	
 	while(sopit!=sopData.end()) {
 		
-		SOPDatum * sopdata = &(sopit->second); 
+		SOPData * sopdata = &(sopit->second); 
 		
 		if(sopdata->strokeCount > strokeCount) { 
 			strokeCount = sopdata->strokeCount; 
@@ -199,7 +199,7 @@ void StrokeOrPoke :: start() {
 				/// make a new SOPDatum!
 				cout << "making a new SOPDatum for id : " << connectedPhone->ID <<"\n";
 				sopData[connectedPhone];
-				SOPDatum * sopdatum = &(sopData[connectedPhone]); 
+				SOPData * sopdatum = &(sopData[connectedPhone]); 
 				sopdatum->phone = connectedPhone; 
 				
 				

@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body> 
+<script> 
+
+var test = new TestObject(); 
+test.start(); 
+console.log("counter", counter)
+
+function TestObject() { 
+
+	var localVariable1 = "localVar1", 
+	counter = 10; 
+	this.externalVar; 
+	
+	var start = this.start = function () {
+		
+		console.log("this is the start function being called from outside");
+		console.log("this = ", this, (this == window)); 
+		console.log(localVariable1);
+		
+		setInterval(localLoop, 1000);
+	}
+	
+	function localLoop() { 
+		
+		console.log("localLoop ", this, (this == window), counter++);
+		
+	}
+
+
+
+
+
+
+
+
+}
+
+
+</script>
+
+</body>
+</html>

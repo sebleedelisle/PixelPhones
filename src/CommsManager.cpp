@@ -95,7 +95,7 @@ void CommsManager::update(){
 				phone->sendNumBits(numBits);
 				phone->sendFrameRate(phoneFrameRate, doubleToSingleRatio, blackTimeOffset);
 				phone->unitPosition.set(ofMap(i%10, 0,10,0.2,0.8), ofMap(floor(i/10.0),0,10,0.2,0.8));
-				phone->warpedPosition = phone->unitPosition;
+				phone->updateWarpedPosition(warpMatrix);
 				
 				cout << "pos "<< phone->unitPosition <<"\n";
 				
@@ -314,7 +314,7 @@ void CommsManager::foundPhones(vector <FoundPhone *> phones, int vidWidth, int v
 			if(cphone->ID == phone->ID) {
 				cphone->unitPosition.set(phone->unitPosition);
 				//cphone->pixelPosition.set(cphone->unitPosition.x * ofGetWidth(), cphone->unitPosition.y * ofGetHeight()); 
-				cphone->warpedPosition = warpMatrix * cphone->unitPosition; 
+				cphone->updateWarpedPosition(warpMatrix);
 				
 				cphone->stopBroadcastingID(); 
 				cphone->found = true; 
@@ -334,17 +334,26 @@ void CommsManager::foundPhones(vector <FoundPhone *> phones, int vidWidth, int v
 
 void CommsManager :: updateWarpPoints( ofPoint points[4], int w, int h){
 	
+    
 	for(int i=0; i<4;i++) { 
 		sourcePoints[i] = points[i]; 
 		//sourcePoints[i].z = 0; 
 		unitSourcePoints[i].x = points[i].x/(float)w; 
 		unitSourcePoints[i].y = points[i].y/(float)h; 
 		unitSourcePoints[i].z = 0; 
-	}
+        cout << "s: "<< unitSourcePoints[i] << " d: " << destPoints[i] << "\n ";
+    
+        
+    }
 	// NOW UPDATE MATRIX
 	
-	warpMatrix = findHomography(unitSourcePoints, destPoints);
+   warpMatrix = findHomography(unitSourcePoints, destPoints);
 	
+    if(warpMatrix.isNaN()) {
+        cout << "warpMatrix all fucked up :( \n" <<  unitSourcePoints << "\n" << destPoints << "\n";
+        warpMatrix.makeIdentityMatrix();
+        
+    }
 		
 	
 	map<int, ConnectedPhone*> :: iterator it = connectedPhones.begin();
@@ -352,14 +361,9 @@ void CommsManager :: updateWarpPoints( ofPoint points[4], int w, int h){
 	while(it!=connectedPhones.end()) { 
 		
 		ConnectedPhone * phone = it->second; 
-		
-	
-		if(phone->found) { 
-			phone->warpedPosition = warpMatrix * phone->unitPosition; 
-		} else {
-            phone->warpedPosition =  phone->unitPosition; 
-        }
-				
+
+		phone->updateWarpedPosition(warpMatrix);
+        
 		it++;
 	}
 		

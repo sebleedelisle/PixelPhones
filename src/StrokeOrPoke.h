@@ -9,7 +9,7 @@
 
 #pragma once
 #include "OutputEffect.h"
-#include "SOPDatum.h"
+#include "SOPData.h"
 #include "ConnectedPhone.h"
 
 class StrokeOrPoke : public OutputEffect {
@@ -33,7 +33,7 @@ class StrokeOrPoke : public OutputEffect {
 	void notifyTopStroker(); 
 	void notifyTopPoker(); 
 	
-	map<ConnectedPhone * , SOPDatum> sopData;
+	map<ConnectedPhone * , SOPData> sopData;
 	map <int, ConnectedPhone> * connectedPhones;
 
 	int numPokes; 

@@ -77,8 +77,8 @@ void NyanCatch::update() {
 				if((!phone->startMessageSent) && (phone->displayCatTime - timer < 2000)) {
 					
 					cphone->sendMsg("p:nyc|show|"+ofToString(phone->displayCatTime)+"|"+ofToString(speed));
-					cphone->sendColour(ofColor(255,255,0), phone->displayCatTime-timer);
-					cphone->sendColour(ofColor(0,255,255), phone->displayCatTime+speed-timer);
+					//cphone->sendColour(ofColor(255,255,0), phone->displayCatTime-timer);
+					//cphone->sendColour(ofColor(0,255,255), phone->displayCatTime+speed-timer);
 					
 					phone->startMessageSent = true; 
 					// NOTE - should make sure this matches resolution

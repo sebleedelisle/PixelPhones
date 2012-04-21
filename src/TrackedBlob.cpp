@@ -29,9 +29,11 @@ void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBet
 	
 	
 	if(pixelCount-lastUpdated>lifeExpectancy) {
-		enabled = false; 
+		// the phone has stopped flashing
+        enabled = false; 
 		
 	} else if(pixelCount > (gapNumFrames * numbits * 2)) {
+        // means that we have way too much data - invalid so destroy!
 		enabled = false; 
 		data->reset(); 
 		

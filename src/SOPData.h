@@ -1,5 +1,5 @@
 /*
- *  SOPDatum.h
+ *  SOPData.h
  *  PixelPhone05
  *
  *  Created by Seb Lee-Delisle on 04/09/2011.
@@ -9,11 +9,11 @@
 #pragma once
 #include "ConnectedPhone.h"
 
-class SOPDatum { 
+class SOPData { 
 
 	public : 
 	
-	SOPDatum() { 
+	SOPData() { 
 		strokeCount = 0; 
 		pokeCount = 0; 
 		lastMessageTime = 0;

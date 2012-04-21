@@ -10,7 +10,6 @@
 
 WebSocketClient::WebSocketClient() { 
 	
-	cout << "constructor \n";
 	
 }
 
