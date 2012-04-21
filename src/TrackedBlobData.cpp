@@ -79,18 +79,10 @@ int TrackedBlobData::getID(float bwthreshold) {
 			newpulsedata->bit = !pulseData->bit; 
 			
 			// add proportion to last colour data, 
-			//if(fabs(brightness-0.5)<0.25) {
-			
 			newpulsedata->length += (newpulsedata->isBlack() ? (1-brightness) : brightness)*time; 
 			pulseData->length += (pulseData->isBlack() ? (1-brightness) : brightness)*time; 
 			
 			
-			//} else { //otherwise just add 1 to new colour data
-			
-			//	newcoldata->length+=1;
-			//}
-			
-			//cout << (colData->isBlack ? "Black : " : "White : ") << colData->length << "\n";
 			// add colour data to array
 			pulseData = newpulsedata; 
 			pulseLengths.push_back(pulseData); 
@@ -120,11 +112,14 @@ int TrackedBlobData::getID(float bwthreshold) {
         // which list do we use? 
 		vector <float> * vec = (pulseData->isBlack()) ? &zeroLengths : &oneLengths; 
 		
+        // NOTE! WE CAN'T DO THAT ANYMORE OR THE CLEVER FAST OUT WON'T WORK... 
 		// if we don't already have that number, add it into the vector
-		if(std::find(vec->begin(), vec->end(), pulseData->length) == vec->end()) {
-			vec->push_back(pulseData->length); 
-		}
+		//if(std::find(vec->begin(), vec->end(), pulseData->length) == vec->end()) {
+		//}
+    
+        vec->push_back(pulseData->length); 
 		
+        
 	}
 	
 	// now sort them! 
@@ -136,6 +131,8 @@ int TrackedBlobData::getID(float bwthreshold) {
 	// so now use each length of each vector as a threshold 
 	float zeroThreshold = 0; 
 	float oneThreshold = 0; 
+    float zeroConfidence = 0; 
+    float oneConfidence = 0; 
 	
 	int resultCode = -1; 
 	
@@ -149,48 +146,85 @@ int TrackedBlobData::getID(float bwthreshold) {
 #endif
     
     // an array to store the solution in
-    //bool solution[totalBitCount]; 
-    
+    unsigned long long solution = 0; 
+    int bitIndex = 0; 
+    //cout << "-----------------------------------------------------\n";
+    int solutioncount = 0; 
+    float lastConfidenceLevel = -1; 
 	//iterate through all the zeroLengths
 	for(int i = 0 ; i<=zeroLengths.size(); i++) { 
 		
 		zeroThreshold = (i<zeroLengths.size()) ? zeroLengths[i] : FLT_MAX; 
+        zeroConfidence = ((i>0)&&(i<zeroLengths.size())) ? zeroLengths[i]-zeroLengths[i-1] : 0; 
+        
 		
 		// and the one lengths
 		for(int j = 0; j<=oneLengths.size(); j++) { 
 			
 			oneThreshold = (j<oneLengths.size())? oneLengths[j] : FLT_MAX; 
-			
+            oneConfidence = ((j>0)&&(j<oneLengths.size())) ? oneLengths[j]-oneLengths[j-1] : 0; 
+        	
+            // SUPER CLEVER FAST OUT! 
 			int bitlength = (i) + ((zeroLengths.size()-i)*2) + (j) + ((oneLengths.size()-j)*2); 
-			
 			if(bitlength!=totalBitCount) continue; 
+            
+            
 			
 			
 			// and now work out a solution for those two thresholds... 
-			string solution (""); 
-			
+			string solutionstring (""); 
+            solutionstring.reserve(totalBitCount); 
+            
+            // ABANDONED ATTEMPT AT BINARY VERSION... 
+			//solution = 0; 
+            //bitIndex = totalBitCount;
+            
 			for(int k = 0; k<pulseLengths.size(); k++) {
 				
-				IDPulseData * coldata = pulseLengths[k]; 
+				IDPulseData * pulsedata = pulseLengths[k]; 
 				
-				float threshold = coldata->isBlack() ? zeroThreshold : oneThreshold; 
-				string digitchar = ofToString(coldata->bit); 
+				float threshold = pulsedata->bit ? oneThreshold : zeroThreshold; 
 				
-				solution += (coldata->length < threshold) ? digitchar : digitchar+digitchar; 
+                /*cout << bitIndex << " " << pulseData->bit << " "; 
+                
+				if(pulseData->bit) solution |= 1 << bitIndex;
+                bitIndex--;
+                    
+                
+                if(pulsedata->length >= threshold) {
+                    if(pulseData->bit) solution |= 1 << bitIndex;
+                    bitIndex--; 
+                }
+                cout << convBase(solution,2)+"\n";
+                */
+                
+                
+                string digitchar = pulsedata->bit ? "1":"0";  
+                solutionstring+= (pulsedata->length < threshold) ? digitchar : digitchar+digitchar; 
 				
 			}	
 			
-			int decoded = decodeManchesterString(&solution);
-			//cout <<  i<< " " << j << " "<< solution << " " << ((decoded>-1) ? "<<<<<<<<<<<<<<<<<<<<<< " : " ") << decoded << "\n";
+			int decoded = decodeManchesterString(&solutionstring);
+			
+            //cout <<  i<< " " << j << " "<< solution << " " << ((decoded>-1) ? "<<<<<<<<<<<<<<<<<<<<<< " : " ") << decoded << "\n";
 			
 			// TODO : Add confidence and make array of solutions. 
 			if(decoded>-1) {
-				resultCode = decoded;
-				if(bitlength!=totalBitCount) { 
-					cout << "bitlength = " << bitlength << " string length = " << solution.size() << " totalBitCount "<< totalBitCount << "\n"; 
-					cout <<  i<< " " << j << " "<< zeroLengths.size() << " " << oneLengths.size() << "\n";
-					cout <<  i<< " " << j << " "<< solution << " " << ((decoded>-1) ? "<<<<<<<<<<<<<<<<<<<<<< " : " ") << decoded << "\n";
-				}
+                float confidence = zeroConfidence * oneConfidence;
+                
+				if(confidence > lastConfidenceLevel) {
+                    resultCode = decoded;
+                    lastConfidenceLevel = confidence;
+                }
+                
+                cout << solutioncount << " " << zeroConfidence <<" "<< oneConfidence <<" "<< solutionstring << " " << decoded << "\n";
+                
+                solutioncount++; 
+//				if(bitlength!=totalBitCount) { 
+//					cout << "bitlength = " << bitlength << " string length = " << solution.size() << " totalBitCount "<< totalBitCount << "\n"; 
+//					cout <<  i<< " " << j << " "<< zeroLengths.size() << " " << oneLengths.size() << "\n";
+//					cout <<  i<< " " << j << " "<< solution << " " << ((decoded>-1) ? "<<<<<<<<<<<<<<<<<<<<<< " : " ") << decoded << "\n";
+//				}
 			}
 			
 		}
@@ -210,29 +244,8 @@ int TrackedBlobData::decodeManchesterString(string * code) {
 	bool bit = true; 
 	bool count = 0; 
 	
-	//cout << str; 
-	
-	// get rid of the 1s at the end of the string (the white padding)
-	//char padChar = BLACKGAPS ? '0' : '1'; 
-	//while((str.size()>0) && (str[str.size()-1]==padChar))
-	//	str.erase(str.size()-1,1); 
-	
-	// and if there's any superfluous 1s at the beginning get rid of those too. 
-	//while((str.size()>0) && (str[0]==padChar))
-	//	str.erase(0,1); 
-	
-	
-	// code too short - should place the actual number of bits we're looking for here
-	//if(str.size()!= (((numBits*2) + 2)*2)) {// != (2 + numBits*2) * 2 ) {
-		//cout << "code too short";
-	//	return -1; 
-	//
-	//}
-	// odd number of digits
-	//if(str.size()%2==1) {
-		//cout << "odd number of digits";
-	//	return -1; 
-	//}
+    // this function assumes that it's the right number of bits that we're looking for
+    // all data cleaning should have been done before now. 
 
 	vector<int> decoded; 
 	
@@ -245,10 +258,8 @@ int TrackedBlobData::decodeManchesterString(string * code) {
 		if((bit1^bit2) == 0)  return -1; 
 		
 		decoded.push_back( bit1); 
-		
-		
 	}
-	
+    
 	// first digit must be 1!
 	int firstBit = BLACKGAPS ? 1 : 0; 
 	
@@ -264,12 +275,11 @@ int TrackedBlobData::decodeManchesterString(string * code) {
 	
 	// this is the number of bits in the final number
 #ifdef USECHECKSUM
+    
 	int bitcount = floor(decoded.size()/1.5); 
-#else
-	int bitcount = (decoded.size()/2); 
-#endif
-	
-	// make sure digits are same both times
+
+	// make sure digits match checksum
+    
 	for(int i=0; i<bitcount; i+=2) {
 		if(i+1<bitcount) {
 			int checkdigit = (decoded[i]==decoded[i+1]) ? 0 : 1; 
@@ -278,13 +288,19 @@ int TrackedBlobData::decodeManchesterString(string * code) {
 			if(decoded[i] != decoded[bitcount + (i/2)]) return -1; 
 		}
 		
-		//if(decoded[i]!=decoded[i+halfsize]) return -1; 
-		
+	}
+
+#else
+	int bitcount = (decoded.size()/2); 
+	// make sure digits are same both times
+	for(int i=0; i<bitcount; i++) {
+		if(decoded[i] != decoded[bitcount + i]) return -1; 
 		
 	}
+
+#endif
 	
-	//cout << str <<"\n";
-	
+
 	int num = 0; 
 	
 	for(int i = 0; i< bitcount ; i++) {
@@ -292,20 +308,11 @@ int TrackedBlobData::decodeManchesterString(string * code) {
 		
 		num |= (bit<<(bitcount-1-i)); 
 		
-		//printf("%d", bit); 
+	
 		
 	}
-	//printf("\n"); 
-	//printf("%d \n", num); 
-	//cout << str << " "<< str.size() <<"\n"; 
 	
-	return num; 
-	
-	
-	//	cout << str[str.size()-1] << " "<<  (str[str.size()-1] =='0'); 
-	
-	
-	
+	return num;
 	
 }
 
@@ -316,4 +323,22 @@ void TrackedBlobData::reset() {
 	times.clear(); 
 
 
+}
+
+
+string TrackedBlobData::convBase(unsigned long long v, long base)
+{
+	string digits = "0123456789abcdef";
+	string result;
+	if((base < 2) || (base > 16)) {
+		result = "Error: base out of range.";
+	}
+	else {
+		do {
+			result = digits[v % base] + result;
+			v /= base;
+		}
+		while(v);
+	}
+	return result;
 }

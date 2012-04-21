@@ -111,6 +111,8 @@ void TrackedBlob::updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, 
 	data->boundingRect.width/=(float)cvWidth; 
 	data->boundingRect.height/=(float)cvHeight; 
 	pixelPosition*=vidScale;
+    pixelPosition.x+=1; 
+    pixelPosition.y+=1; 
 	
 	lastUpdated = pixelCount;
 	

@@ -162,6 +162,8 @@ void testApp::guiSetup() {
 	phoneTracker.recording = false; 
 	
 	gui.show();
+    
+    commsManager.updateWarpPoints(warpPoints, phoneTracker.cvColour.getWidth(), phoneTracker.cvColour.getHeight()); 
 
 }
 

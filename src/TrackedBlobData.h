@@ -35,6 +35,9 @@ class TrackedBlobData {
 	//bool vectorContainsInt(vector <int> * vec, int num);
 	void updateGreys();
 	void reset(); 
+    
+    string convBase(unsigned long long v, long base);
+
 	
 
 };

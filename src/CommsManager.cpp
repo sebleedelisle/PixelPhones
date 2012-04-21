@@ -50,26 +50,28 @@ void CommsManager::update(){
 	map<int,ofxTCPClient>::iterator it;
 	
 	
-	//for each client lets send them a message letting them know what port they are connected on
 	for(it=TCP.TCPConnections.begin(); it!=TCP.TCPConnections.end(); it++){
 		
 		// index number for this connection 
-		
 		int i = it->first; 
 		
 		if((!TCP.isClientSetup(i)) || (TCP.getClientPort(i)==0)) {
 			// then it's a fake client! Or something :/ Or actually I 
 			// think it's disconnected
-			
+            
+			map<int,ConnectedPhone*>::iterator phoneit = connectedPhones.find(i);
+            
 			// should probably find relevant connectedPhone and destroy it. 
-			
-			
-			continue; 
+			if(phoneit!=connectedPhones.end()) { 
+               // phoneit->second->close();
+                cout << "we have a connectedPhone object for a phone that has been disconnected:" << i <<" \n";
+			}
+            
 		} else {
 			
-			// what we're doing here is going through each tcp client and checking 
-			// if we've set them up with a phone communicator object yet - if we haven't then 
-			// we do the handshake? I think ??? 
+			// go through each tcp client and check 
+			// whether we've set them up with a phone communicator object yet - if we haven't then 
+			// we do the handshake 
 			
 			if(connectedPhones.find(i)==connectedPhones.end()){
 				
@@ -83,7 +85,7 @@ void CommsManager::update(){
 				int id = i;//floorf(ofRandom(0,16));
 				websocketclient->setup(id,client); 
 				
-				// this makes a new one I think!
+				// this makes a new one !
 				ConnectedPhone * phone = new ConnectedPhone(&labelFbo); 
 				phone->labelFont = &labelFont; 
 				connectedPhones[i] = phone; 
@@ -352,9 +354,11 @@ void CommsManager :: updateWarpPoints( ofPoint points[4], int w, int h){
 		ConnectedPhone * phone = it->second; 
 		
 	
-		//if(phone->found) { 
+		if(phone->found) { 
 			phone->warpedPosition = warpMatrix * phone->unitPosition; 
-		//}
+		} else {
+            phone->warpedPosition =  phone->unitPosition; 
+        }
 				
 		it++;
 	}

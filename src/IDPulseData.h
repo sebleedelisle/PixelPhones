@@ -14,7 +14,7 @@ class IDPulseData {
 	public : 
 	
 	IDPulseData() { 
-		bit = 0; 
+		bit = false; 
 		length = 0; 
 		bitCount =  0; 
 	//	nextSameColour = NULL; 
@@ -52,9 +52,9 @@ class IDPulseData {
 		return bitCount; 
 	}*/
 
-	bool isBlack() { return bit==0; }
+	bool isBlack() { return !bit; }
 	
-	int bit;				//0 for black, true for white? 
+	bool bit;				// false for black, true for white? 
 	float length;			// length of the pulse in frames 
 	float ratioToPrevious;	// length of previous over this length
 	int bitCount;			// whether this is a single or double

@@ -43,6 +43,7 @@ void NyanCatch::update() {
 					
 					nyanPhone->connectedPhone = phone; 
 					nyanCatchPhones.push_back(nyanPhone); 
+                    nyanPhone->screenPos.set(phone->unitPosition); 
 					
 					cout << "adding phone to list " << phone->ID <<"\n";
 					phone->sendMsg("p:nyc|start"); 
@@ -81,7 +82,7 @@ void NyanCatch::update() {
 					
 					phone->startMessageSent = true; 
 					// NOTE - should make sure this matches resolution
-					catTargetPos.set(cphone->unitPosition*ofPoint(640,480)); 
+					catTargetPos.set(phone->screenPos * ofPoint(640,480)+ofPoint((ofGetWidth()-640)/2,(ofGetHeight()-480)/2 )); 
 				}
 				
 				
@@ -171,9 +172,9 @@ void NyanCatch :: draw() {
 		
 	}
 	if(updatePhysics) {
-		catVel*=0.96; 
+		catVel*=0.8; 
 		
-		catVel += (catTargetPos-catPos)*0.1; 
+		catVel += (catTargetPos-catPos)*0.01; 
 		catPos+=catVel; 
 		lastUpdate = ofGetElapsedTimeMillis(); 
 	}
@@ -191,9 +192,26 @@ void NyanCatch :: draw() {
 		ofPopMatrix(); 
 	}
 }
+
+
+bool nyanCatchSortFunction(NyanCatchPhone * first, NyanCatchPhone * second) { 
+    
+    if((first==NULL )|| (second == NULL)) return false; 
+
+    int rowfirst = floor(first->screenPos.y*10);
+    int rowsecond = floor(second->screenPos.y*10); 
+    float index1 = rowfirst + ((rowfirst%2==0) ? first->screenPos.x : 1-first->screenPos.x);
+    float index2 = rowsecond + ((rowsecond%2==0) ? second->screenPos.x : 1-second->screenPos.x);
+    
+    return index1<index2 ;
+}
+
 void NyanCatch::startGame() { 
 
 	
+   
+    
+    
 	//if(!started) return; 
 	// sort vector of phones in order that the cat should see them 
 	
@@ -204,7 +222,8 @@ void NyanCatch::startGame() {
 	
 	map <int, ConnectedPhone *> :: iterator it = connectedPhones->begin(); 
 	
-	int counter = 0; 
+	//int counter = 0; 
+    nyanCatchPhones.clear(); 
 	
 	while(it!=connectedPhones->end() ) {
 		
@@ -213,21 +232,31 @@ void NyanCatch::startGame() {
 			if(nyanCatchPhonesByConnectedPhone.find(it->second)!=nyanCatchPhonesByConnectedPhone.end()) {
 				   
 				NyanCatchPhone* phone = nyanCatchPhonesByConnectedPhone[it->second]; 
+	             
+                nyanCatchPhones.push_back(phone); 
+                phone->screenPos.set(it->second->unitPosition); 
 				
-				phone->reset(); 
-				phone->displayCatTime = gameStartTime + ( counter* catInterval); 
-				phone->connectedPhone->sendMsg("p:nyc|reset"); 
-				
-				//cout << counter << " phone " <<phone->connectedPhone->ID << " " <<phone->displayCatTime<<"\n";
-			
-				counter ++;
 			}
 		}
 		
 		it++; 
 	
 	}
-	
+    
+    sort(nyanCatchPhones.begin(), nyanCatchPhones.end(), nyanCatchSortFunction); 
+    
+	for(int i = 0; i<nyanCatchPhones.size(); i++) { 
+        
+        NyanCatchPhone* phone = nyanCatchPhones[i]; 
+        
+        phone->reset(); 
+        
+        phone->connectedPhone->sendMsg("p:nyc|reset"); 
+        
+        phone->displayCatTime = gameStartTime + ( i* catInterval);    
+        
+        
+    }
 	gameState = NYAN_STATE_PLAYING;
 
 	// game ends 5 secs after all the cats have gawn. 

@@ -52,9 +52,11 @@ class ConnectedPhone  {
 	
 	bool found; 
 	bool connectionReady; 
-	//ofVec2f pixelPosition;
+	// the unit position of the phone relative to the camera view
 	ofPoint unitPosition;
-	ofPoint warpedPosition; 
+	// the unit position after it's been warped to fix the perspective 
+    // in the room
+    ofPoint warpedPosition; 
 	int ID; 
 	
 	int counter; 

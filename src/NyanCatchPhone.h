@@ -12,6 +12,7 @@ class NyanCatchPhone {
 	public : 
 	NyanCatchPhone() { 
 		reset();
+        screenPos.set(0,0,0); 
 	}
 	
 	void reset() { 
@@ -20,6 +21,7 @@ class NyanCatchPhone {
 		catCaught = false; 
 		startMessageSent = false;
 		touchTime = 10000000;
+       
 	}
 	
 	
@@ -28,6 +30,7 @@ class NyanCatchPhone {
 	bool startMessageSent; 
 	int touchTime; 
 	bool catCaught; 
+    ofPoint screenPos; 
 	
 	
 	ConnectedPhone * connectedPhone; 
