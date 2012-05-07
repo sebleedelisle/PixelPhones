@@ -18,10 +18,12 @@
 class PhoneTracker { 
 	
 	public : 
+    
+    PhoneTracker();
 	
 	void setupCamera(int width, int height); 
 	vector <FoundPhone *> update(bool broadcastings); 
-	void draw();
+	void draw(ofRectangle * drawRect);
 	
 	bool doRectanglesIntersect(ofRectangle * rect1, ofRectangle * rect2); 
 	
@@ -57,6 +59,7 @@ class PhoneTracker {
 	
 	float lastVideoFrameMils; 
 	float videoFrameRate; 
+    float smoothVideoFrameRate; 
 	int phoneFrameRate; 
 	int numBits; 
 	float gapNumFrames; 
@@ -74,11 +77,13 @@ class PhoneTracker {
     float doubleToSingleRatio;
     int frameCounter;
 	bool broadcasting; 
+    bool calibrating; 
 	bool showTrails;
     
 	bool flipX; 
 	bool flipY; 
 	
+    string recordingFolder; 
 	bool recording; 
 	
 	float bwthreshold; 

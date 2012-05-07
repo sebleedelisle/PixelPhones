@@ -12,6 +12,8 @@
 #include "ofxLibdc.h"
 #include "CameraWrapper.h"
 #include "CameraVidGrabber.h"
+#include "CameraFirewire.h"
+#include "CameraVidPlayer.h"
 
 class CameraManager { 
 	public : 

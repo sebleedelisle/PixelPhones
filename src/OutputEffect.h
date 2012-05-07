@@ -20,7 +20,7 @@ class OutputEffect {
 	OutputEffect(int w, int h);
 	
 	virtual void update() {}; 
-	virtual void draw() {};
+	virtual void draw(ofRectangle* drawRect) {};
 	virtual void start() {
 		started = true;
 	}; 

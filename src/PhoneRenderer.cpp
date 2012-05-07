@@ -115,7 +115,7 @@ void PhoneRenderer :: updatePhonesWithFBO( ofFbo * fbo) {
 		if((!onlyUseFoundPhones) || phone->found) {
 			
 			
-			cout << "warpedPosition : " << phone->warpedPosition << "\n";
+			//cout << "warpedPosition : " << phone->warpedPosition << "\n";
 			ofColor col = pixels.getColor(ofMap(phone->warpedPosition.x,0,1,0, fbo->getWidth(),true), ofMap(phone->warpedPosition.y,0,1,0, fbo->getHeight(),true)); 
 		
 			// NOW BROADCAST COLOUR TO PHONE! 
@@ -138,11 +138,11 @@ void PhoneRenderer :: updatePhonesWithFBO( ofFbo * fbo) {
 }
 
 
-void PhoneRenderer::draw() {
+void PhoneRenderer::draw(ofRectangle* drawRect) {
 	
 	if(currentProgram == NULL) return; 
 
-	currentProgram->draw(); 
+	currentProgram->draw(drawRect); 
 	
 	//	
 //	
@@ -240,11 +240,11 @@ void PhoneRenderer :: initGui(ofxSimpleGuiToo * gui){
 	gui->addSlider("size", particleWoosh->size, 0, 30).setSize(200,30);
 	gui->addSlider("fade", particleWoosh->fade, 0, 255).setSize(200,30);
 
-	gui->addSlider("plasmaSpeed", plasmaEffect->speed, 0.1, 10).setNewColumn(true).setSize(200,30);
-	gui->addSlider("gen1", plasmaEffect->gen1, 0.1, 20).setSize(200,30);
-	gui->addSlider("gen2", plasmaEffect->gen2, 0.1, 20).setSize(200,30);
-	gui->addSlider("gen3", plasmaEffect->gen3, 0.1, 20).setSize(200,30);
-	gui->addSlider("gen4", plasmaEffect->gen4, 0.1, 20).setSize(200,30);
+	gui->addSlider("plasmaSpeed", plasmaEffect->speed, 0, 2).setNewColumn(true).setSize(200,30);
+	gui->addSlider("gen1", plasmaEffect->gen1, 1, 50).setSize(200,30);
+	gui->addSlider("gen2", plasmaEffect->gen2, 1, 50).setSize(200,30);
+	gui->addSlider("gen3", plasmaEffect->gen3, 1, 50).setSize(200,30);
+	gui->addSlider("gen4", plasmaEffect->gen4, 1, 50).setSize(200,30);
 	gui->addSlider("steps", plasmaEffect->steps, 0, 20).setSize(200,30);
 	gui->addSlider("hueOffset", plasmaEffect->hueOffset, 0, 255).setSize(200,30);
 	gui->addSlider("hueRange", plasmaEffect->hueRange, 0, 255).setSize(200,30);

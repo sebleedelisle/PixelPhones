@@ -79,6 +79,7 @@ div {
 	startTime = (new Date()).getTime(), 
 	currentFrame = 0, 
 	broadcastIntervalID = -1,
+	broadcastStartDelay = 0, 
 	blackTimeOffset = 20, // number of extra mils to add to an 'off' signal than an on
 	doubleToSingleRatio = 2.5, // how much longer a double is than a single
 	currentBroadcastDigitIndex = 0,
@@ -103,8 +104,8 @@ div {
 	function init(){
 
 		canvas = document.createElement('canvas'); 
-		canvas.width = 2; 
-		canvas.height = 2; 
+		canvas.width = 3; 
+		canvas.height = 3; 
 		document.body.appendChild(canvas); 
 		c = canvas.getContext('2d'); 
 		
@@ -128,7 +129,7 @@ div {
 	}
 
 	function connect(){
-		trace ("trying port #"+ portNum, true+"...");
+		trace ("trying port #"+ portNum + "...", true);
 
 		portNum++; 
 		if(portNum>12000) portNum = 11995;	 
@@ -139,6 +140,7 @@ div {
 			
 			socket.onopen = function(){
 				message('Socket Status: '+socket.readyState+' (open)');	
+				trace('connected');
 				socket.send("ready"); 
 				clock = new Clock(); 
 			
@@ -346,7 +348,7 @@ div {
 	function changeColour(colString) { 
 		while(colString.length<6) colString = "0"+colString; 
 		c.fillStyle = "#"+colString; 
-		c.fillRect(0,0,2, 2); 
+		c.fillRect(0,0,4, 4); 
 		window.scrollTo(0,1); 
 		currentColour = parseInt(colString, 16); 
 	}
@@ -379,10 +381,11 @@ div {
 		setTransform("scale(0,0)");	
 		changeColour("ffffff");
 	
-		setTimeout(function() { broadcastIntervalID = setInterval(loop,16);reset(); }, Math.floor(Math.random()*2000)) ; 
+		//setTimeout(function() { broadcastIntervalID = setInterval(loop,16);reset(); }, Math.floor(Math.random()*2000)) ; 
 		
 		//reset();
-		//broadcastIntervalID = setInterval(loop,1);
+		broadcastIntervalID = setInterval(loop,16);
+		broadcastStartDelay = Math.random()*20; 
 		
 		log("broadcasting id : "+ID); 
 		log(broadcastNumber+"\n"+getBinaryCode(broadcastNumber)+"\n"+code);
@@ -405,7 +408,7 @@ div {
 	//
 	
 	function loop() {
-		
+		if(broadcastStartDelay-->0) return; 
 		var now = Date.now();// || (new Date()).getTime());
 		var elapsedTime =   now - lastChangeTime; 
 		
@@ -452,10 +455,16 @@ div {
 			// get next digit and set the next changetime
 			currentBroadcastDigitIndex ++; 
 			
-			// if we're at the end, restart. 
-			if(currentBroadcastDigitIndex>code.length) currentBroadcastDigitIndex = 0; 
+			// if we're at the end, tell the server and stop. 
+			if(currentBroadcastDigitIndex>code.length) {
+				// if you'd rather just restart, then use : currentBroadcastDigitIndex = 0; 
+				// b0 tells the server we're finished. 
+				console.log('stopping broadcasting');
+				socket.send('b0');
+				stopBroadcastingID(); 
+				return; 
 			
-			
+			}
 			
 			// get the next bit to broadcast, 0 or 1
 			var digit = currentDigit = code[currentBroadcastDigitIndex]; 

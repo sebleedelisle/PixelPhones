@@ -33,7 +33,7 @@ class TrackedBlobData {
 	int getID(float threshold = 0.5); 
 	int decodeManchesterString(string * code);
 	//bool vectorContainsInt(vector <int> * vec, int num);
-	void updateGreys();
+	bool updateGreys();
 	void reset(); 
     
     string convBase(unsigned long long v, long base);

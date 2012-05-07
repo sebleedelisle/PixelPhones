@@ -1,0 +1,84 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<html>
+	<head>
+	
+	<style>
+	
+	body {
+		margin:0;
+		padding:0;
+		font-family: helvetica, Arial, sans;
+		}
+	
+	form {	
+			margin: 0px auto; 
+			border : 1px black solid;
+			text-align:center;}
+	
+
+	input[type=text] {
+		border: 1px solid #cfcfcf;
+		padding:.1em 5%;
+		margin : 1em auto 0.1em auto;
+		width:80%;
+		
+		/* for the text inside */
+		font-size: 2em;
+		color:#333;
+		text-align: center;
+		display:block;
+	}
+	
+	input[type=submit] {
+		border: 1px solid #333;
+		background:#333;
+		color:white;
+		width:50%;
+		font-size:1em;
+		padding:.5em 5%;
+	}
+	
+	</style>
+	
+	</head>
+	
+	<body>
+	<script>
+		var nameinput;
+		window.addEventListener('load', init);
+		function init(e) { 
+			 nameinput = document.getElementById('name');
+			console.log(nameinput);
+			nameinput.addEventListener("change", onChange);
+			window.addEventListener('keyup', onKeyUp)
+		
+		}
+		function onKeyUp(e) { 
+			console.log('keyup', e);
+			document.getElementById('text').innerHTML = "typed : "+nameinput.value;
+			
+		}
+		function onChange(e) { 
+			//document.body.appendText("hello");
+			//alert("hello")	
+			console.log('hello');
+		}
+	</script>
+		<form>
+			<input type="text" id="name"  autocorrect="off" autocomplete="off" autocapitalize="none" />
+			<br>
+			<input type="submit" value = "go" name="go" id="go" />
+		
+		</form>
+
+		<div id="text">hello<br></div>
+	
+	
+	</body>
+
+
+</html>

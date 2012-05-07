@@ -32,7 +32,7 @@ class NyanCatch : public OutputEffect {
 	void stop(); 
 	
 	void update(); 
-	void draw(); 
+	void draw(ofRectangle* drawRect); 
 	
 	void startGame(); 
 	void gameOver();

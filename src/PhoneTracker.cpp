@@ -9,6 +9,10 @@
 
 #include "PhoneTracker.h"
 
+PhoneTracker::PhoneTracker() { 
+    calibrating = false; 
+    
+}
 
 void PhoneTracker::setupCamera(int camwidth, int camheight){
 	
@@ -45,8 +49,8 @@ void PhoneTracker::setupCamera(int camwidth, int camheight){
 	vidWidth = cameraManager.getWidth(); 
 	vidHeight = cameraManager.getHeight(); 
 	
-	cvWidth = 320; 
-	cvHeight = 240; 
+	cvWidth = 1024; 
+	cvHeight = 768; 
 	
 	vidScale = (float)vidWidth/(float)cvWidth; 
 	
@@ -64,18 +68,23 @@ void PhoneTracker::setupCamera(int camwidth, int camheight){
 	ofClear(0, 0, 0, 0); 
 	trackingDebugData.end(); 
 	trackingDebugDataLine = 0; 
+    
+    videoFrameRate = smoothVideoFrameRate = 30; 
+    
 	
 }
 
 
 vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 	
+    int startTime = ofGetElapsedTimeMillis(); 
+    
 	if ((!isBroadcasting) && (broadcasting)) {
 		//clear everything... 
 		spareTrackedBlobs.insert(spareTrackedBlobs.end(), trackedBlobs.begin(), trackedBlobs.end());
 		trackedBlobs.clear(); 
-		
 	}
+    
 	broadcasting = isBroadcasting;
 	
 	vector <FoundPhone *> foundPhones; 
@@ -95,23 +104,35 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 			
             frameCounter++; 
             
+            if(recording) { 
+                if(recordingFolder.empty()) { 
+                    recordingFolder = "recordedvideo/"+ofToString(ofGetSystemTime()); 
+                    ofDirectory::createDirectory(recordingFolder);
+                }
+               // cout << "saving : " << recordingFolder+"/"+ofToString(frameCounter)+".tif \n";
+                ofSaveImage(cameraManager.getPixelsRef(), recordingFolder+"/"+ofToString(frameCounter)+".tga"); 
+                
+            }
+            
 			ofPixelsRef vidpix = cameraManager.getPixelsRef();
 						
 			cvVideo.setFromPixels(vidpix);	
 			cvColour.scaleIntoMe(cvVideo);
 			cvColour.mirror(flipY, flipX);			
 			
+            //ofSaveImage(cvVideo.getPixels()), "testimage.png");
 			
 			float timeNow = (float)ofGetElapsedTimeMillis(); 
 			int milsbetweenframes = timeNow - lastVideoFrameMils;
-			videoFrameRate+= ((( 1000.0f / (milsbetweenframes)) - videoFrameRate) * 0.01) ;
+			videoFrameRate = ( 1000.0f / (float)milsbetweenframes) ;
+            smoothVideoFrameRate += (videoFrameRate-smoothVideoFrameRate)*0.01; 
 			
 			lastVideoFrameMils = timeNow; 
 
 			// gapNumFrames is the number of missing frames before we reset the colour reading. 
 			// the phones will leave 6 blank frames in, so any more than four should be safe as a
 			// trigger. 
-			gapNumFrames = ((float)videoFrameRate / (float)phoneFrameRate)*5;//*doubleToSingleRatio;
+			gapNumFrames = ((float)smoothVideoFrameRate / (float)phoneFrameRate)*5;//*doubleToSingleRatio;
 
 			//unsigned char * vidPix = vidGrabber.getPixels();
 			
@@ -176,7 +197,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
                                 // as they may not overlap. 
                                 
                                 //if(doRectanglesIntersect(&(cvBlob->boundingRect), &(trackedBlob->boundingRect))){
-                                if(cvBlob->centroid.distance(trackedBlob->pixelPosition /vidScale) < trackDistance) {
+                                if(cvBlob->centroid.distance(trackedBlob->pixelPosition) < trackDistance) {
                                 //if(trackedBlob->boundingRect.inside(cvBlob->centroid)) {
                                     trackedBlobHit = trackedBlob; 
                                     trackedBlobHit->updatePosition(cvBlob, cvWidth, cvHeight, vidScale); 
@@ -215,8 +236,8 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 						
 						if(!tb->enabled) continue; 
 						
-						int cx = (int)(tb->pixelPosition.x);
-						int cy = (int)(tb->pixelPosition.y);
+						int cx = (int)(tb->pixelPosition.x * vidScale)+1;
+						int cy = (int)(tb->pixelPosition.y * vidScale)+1;
 						
 						// figure out the pixel index of the centre of the blob
 						int index = (flipY ? (vidHeight - cy) : cy) *vidWidth;
@@ -253,7 +274,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 		
 	}
 	
-	if(trackedBlobsToCheck.size()>0) { 
+	while((ofGetElapsedTimeMillis() - startTime <16) && (trackedBlobsToCheck.size()>0)) { 
 		
 		TrackedBlob * tb = *trackedBlobsToCheck.begin(); 
 		trackedBlobsToCheck.pop_front();
@@ -265,7 +286,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 			thresh+=0.25; 
 		} 
 		if(id>-1){
-			//cout <<  "FOUND! : "<< id << " " << tb->centroid.x << " " << tb->centroid.y << "\n";
+			cout <<  "FOUND! : "<< id <<  "\n";
 			foundPhones.push_back(new FoundPhone(id, tb->data)); 
 			
 		}; 
@@ -282,19 +303,22 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 			
 			ofSetColor(255); 
 			tb->trackedPixels.update();
-			tb->trackedPixels.draw(1,trackingDebugDataLine); 
+			tb->trackedPixels.draw(1,trackingDebugDataLine+0.5); 
 			
 			trackingDebugDataLine++;
 			ofEnableSmoothing(); 
 			ofSetLineWidth(1); 
 			
+            ofNoFill(); 
 			TrackedBlobData* data = tb->data; 
 			float x = 1; 
+            //cout << "tracking data : "; 
 			for(int i=0; i<data->pulseLengths.size();i++) {
 				IDPulseData* pulse = (data->pulseLengths[i]);
 				ofSetColor(pulse->isBlack() ? 0 : 255);
 				ofLine(x, (float)trackingDebugDataLine+0.5f, x+pulse->length, (float)trackingDebugDataLine+0.5f);
 				x+=pulse->length; 
+               // cout << x << " " << pulse->length << " " << pulse->isBlack() << "|"; 
 			}
 			ofDisableSmoothing(); 
 			trackingDebugDataLine++; 
@@ -312,7 +336,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 	
 }
 
-void PhoneTracker :: draw() {
+void PhoneTracker :: draw(ofRectangle* drawRect) {
 	
 	// set the colour to white and then draw the video
 	ofSetColor(255,255,255); 
@@ -320,16 +344,24 @@ void PhoneTracker :: draw() {
 	
 	if(updateVideo) {
 		ofPushMatrix(); 
-		ofTranslate(ofGetWidth()/2,ofGetHeight()/2); 
+		//ofTranslate(ofGetWidth()/2,ofGetHeight()/2); 
+        ofTranslate(drawRect->x, drawRect->y); 
 		ofScale(flipX ? -1 :1, flipY ? -1 : 1); 
+       
+        ofScale(drawRect->width/vidWidth, drawRect->height/vidHeight); 
 
-		cameraManager.draw(-vidWidth/2,-vidHeight/2);
+        ofTranslate(flipX ? -vidWidth : 0, flipY ? -vidHeight : 0); 
+        
+		cameraManager.draw(0,0);
         
 		ofPopMatrix(); 
 	}
 	if(broadcasting) { 
 		ofPushMatrix(); 
-		ofTranslate((ofGetWidth()/2) - (vidWidth/2), (ofGetHeight()/2) - (vidHeight/2)); 
+		//ofTranslate((ofGetWidth()/2) - (vidWidth/2), (ofGetHeight()/2) - (vidHeight/2));
+        
+        ofTranslate(drawRect->x, drawRect->y); 
+        //ofScale(
 		// scale up dependent on video width vs the screen width
 		//ofScale(1024.0/vidWidth, 768.0/vidHeight); 
 	
@@ -343,7 +375,7 @@ void PhoneTracker :: draw() {
 
 		list<TrackedBlob*>::iterator it; 
 		for(it=trackedBlobs.begin(); it!=trackedBlobs.end(); it++) { 
-			(*it)->draw(vidWidth, vidHeight, showTrails);
+			(*it)->draw(drawRect, showTrails);
 		
 		}
 		ofDisableBlendMode(); 

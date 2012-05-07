@@ -1,20 +1,21 @@
-/*
- *  CameraVidGrabber.h
- *  PixelPhones
- *
- *  Created by Seb Lee-Delisle on 16/03/2012.
- *  Copyright 2012 seb.ly. All rights reserved.
- *
- */
+//
+//  CameraFirewire.h
+//  PixelPhones
+//
+//  Created by Seb Lee-Delisle on 26/04/2012.
+//  Copyright (c) 2012 seb.ly. All rights reserved.
+//
 
 #pragma once
 
 #include "ofMain.h"
 #include "CameraWrapper.h"
+#include "ofxLibdc.h"
 
-class CameraVidGrabber : public CameraWrapper { 
+class CameraFirewire : public CameraWrapper{ 
 
-	public :
+
+    public :
 	virtual void setup(string _name, int width = 640, int height = 480, int framerate =30);
 	virtual bool update();  // returns true if frame is new
 	
@@ -24,11 +25,14 @@ class CameraVidGrabber : public CameraWrapper {
 	virtual int getHeight();
 	virtual bool videoSettings(); 
 	virtual void close(); 
-  
-	ofVideoGrabber vidGrabber; 
     
+    ofxLibdc::Camera camera;	
+	
+	// ofImage is where we store the current frame we grabbed from the Camera 
+	ofImage curFrame;
     
 
-	
-	
+
+
+
 };

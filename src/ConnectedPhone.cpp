@@ -24,10 +24,11 @@ void ConnectedPhone::setup(WebSocketClient *webclient, int id) {
 	webClient->tcpClient->setVerbose(true); 
 	
 	//TODO : Maybe ID shouldn't be set here? 
-	ID = id; 
+	ID = calibrationID = id; 
+    
 	connectionReady = false; 
 	counter = 0; 
-	broadcastingID = false;
+	isBroadcasting = false;
 	found = false; 
 	
 	syncStatus = NOT_SYNCED;
@@ -116,7 +117,11 @@ void ConnectedPhone::update() {
 					latency = ofToInt(msg.substr(5, msg.length()) ); 
 					//cout << "SYNCED! Latency : " << latency << "\n";
 					
-				}
+				} else if(msg.find("b0")!=string::npos) { 
+                    isBroadcasting = false; 
+                    cout << "finished broadcasting "<< ID << "\n";
+                    
+                }
 				
 				
 			}
@@ -145,8 +150,8 @@ void ConnectedPhone::draw(int brightness, int vidWidth, int vidHeight) {
 	
 	ofPushMatrix(); 
 	
-	ofTranslate( (int)(warpedPosition.x*vidWidth), (int)(warpedPosition.y*vidHeight));
-	//ofTranslate( (int)(unitPosition.x*vidWidth), (int)(unitPosition.y*vidHeight));
+	//ofTranslate( (int)(warpedPosition.x*vidWidth), (int)(warpedPosition.y*vidHeight));
+	ofTranslate( (int)(unitPosition.x*vidWidth), (int)(unitPosition.y*vidHeight));
 	
 	if(found) ofSetColor(0,brightness, 0); 
 	else ofSetColor((int)(brightness/2)); 
@@ -226,19 +231,19 @@ void ConnectedPhone::sendMsg(string msg) {
 }
 
 void ConnectedPhone::broadcastID() { 
-	if(!broadcastingID) {
+	if(!isBroadcasting) {
 		// make white flash that we can pick up in our camera!
 		//sendColour(ofColor(255,255,255));
 		sendMsg("b1"); 
 	}
-	broadcastingID = true; 
+	isBroadcasting = true; 
 }
 
 void ConnectedPhone::stopBroadcastingID() { 
 	//if(broadcastingID) {
 		sendMsg("b0");
 		//sendMsg("b0");
-		broadcastingID = false; 
+		isBroadcasting = false; 
 		//cout << "StopBroadcastingID " << ID << "\n"; 
 
 	//}

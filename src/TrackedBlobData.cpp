@@ -11,7 +11,7 @@
 
 bool compareFloats (float i,float j) { return (i<j); }
 
-void TrackedBlobData::updateGreys() { 
+bool TrackedBlobData::updateGreys() { 
 	
 	
 	//vector <float> brightnesses; 
@@ -30,12 +30,16 @@ void TrackedBlobData::updateGreys() {
 		
 	}
 	
+    
+    if(minBrightness == maxBrightness) return false;
+    
 	// now normalise the brightnesses so they're all values between 0 and 1 : 
 	
 //	cout << "normalised brightnesses : \n";
 	
 	for(int i = 0; i<greys.size(); i++) {
 		//normalise the brightness
+        
 		greys[i] = ofMap(greys[i], minBrightness, maxBrightness, 0, 1);
 		//(greys[i] - minBrightness) /( maxBrightness - minBrightness) ; 
 		
@@ -44,15 +48,16 @@ void TrackedBlobData::updateGreys() {
 	}
 	//cout << "\n\n";
 	
-	
+	return true; 
 	
 }
 
 int TrackedBlobData::getID(float bwthreshold) {
 	
 	// first normalise the colours by getting max and min brightness
-	
-	updateGreys();
+	// updateGreys returns false if there isn't any difference in brightness between any 
+    // of the pixels. 
+	if(!updateGreys()) return -1;
 	// now work out an array of lengths... 
 	pulseLengths.clear(); 
 	
@@ -217,7 +222,7 @@ int TrackedBlobData::getID(float bwthreshold) {
                     lastConfidenceLevel = confidence;
                 }
                 
-                cout << solutioncount << " " << zeroConfidence <<" "<< oneConfidence <<" "<< solutionstring << " " << decoded << "\n";
+                cout << solutioncount << " " << confidence <<" "<< solutionstring << " " << decoded << "\n";
                 
                 solutioncount++; 
 //				if(bitlength!=totalBitCount) { 

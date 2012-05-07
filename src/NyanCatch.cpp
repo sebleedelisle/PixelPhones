@@ -137,7 +137,7 @@ void NyanCatch::update() {
 	
 }
 
-void NyanCatch :: draw() { 
+void NyanCatch :: draw(ofRectangle* drawRect) { 
 	
 	bool updatePhysics = (ofGetElapsedTimeMillis()-lastUpdate >16) ;
 		
@@ -265,8 +265,8 @@ void NyanCatch::startGame() {
 	//cout << "gameEndTime = " << gameEndTime << " " << (gameEndTime - gameStartTime) << "\n";
 	
 	
-	//nyanSound.setLoop(true);
-	//nyanSound.play(); 
+	nyanSound.setLoop(true);
+	nyanSound.play(); 
 	
 	catPos.set(0,0); 
 	catTargetPos.set(catPos); 

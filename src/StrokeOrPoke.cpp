@@ -9,7 +9,7 @@
 
 #include "StrokeOrPoke.h"
 
-void StrokeOrPoke :: draw() { 
+void StrokeOrPoke :: draw(ofRectangle* drawRect) { 
 	if(!running) return;
 	
 	numPokes = 0; 

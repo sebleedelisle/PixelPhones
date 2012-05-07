@@ -22,11 +22,11 @@ class TrackedBlob {
 	void update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, bool updateTrails, vector<ofPoint *> * otherPoints = NULL); 
 	void updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, float vidScale); 
 	void reset() ; 
-	void draw(int vidwidth, int vidheight, bool showTrails) ; 
+	void draw(ofRectangle * drawRect, bool showTrails) ; 
 	int getID(float threshold = 0.5); 
-//	int decodeManchesterString(string * code);
-//	bool vectorContainsInt(vector <int> * vec, int num);
-//	void updateGreys();
+
+    int cvWidth; 
+    int cvHeight; 
 	
 	ofPoint labelCentre; 
 

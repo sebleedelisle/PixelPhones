@@ -24,8 +24,7 @@ TrackedBlob::TrackedBlob() {
 void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBetweenFrames, bool updateTrails, vector<ofPoint *> * otherPoints) {
 	if(!enabled) return; 
 	lifeExpectancy = gapNumFrames; 
-	//numBits = numbits; 
-	data->numBits = numbits; 
+		data->numBits = numbits; 
 	
 	
 	if(pixelCount-lastUpdated>lifeExpectancy) {
@@ -44,24 +43,6 @@ void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBet
 	}
 	
 	labelCentre.set(pixelPosition);
-	//
-//	for(int i =0; i<otherPoints->size(); i++) { 
-//		ofPoint * otherPoint  = otherPoints->at(i);
-//		
-//		float diffx = fabsf(otherPoint->x - labelCentre.x);
-//		float diffy = fabsf(otherPoint->y - labelCentre.y);
-//		if(diffx<100 && diffy<2) {
-//			// if it's nearer than 6 pixels... 
-//			labelCentre.y +=2; // -= (diffx * 0.1);
-//			//labelCentre.y -= (diffy * 0.1);
-//			
-//		}
-//
-//		
-//	}
-//
-//	otherPoints->push_back(&labelCentre); 
-//
 	
 	if(pixelCount<trackedPixels.width) {
 		trackedPixels.setColor(pixelCount, 0, col);
@@ -74,33 +55,32 @@ void TrackedBlob::update(ofColor col, int gapNumFrames, int numbits, int milsBet
 	
 }
 
-void TrackedBlob::draw(int vidwidth, int vidheight, bool showTrails) { 
-	if(!enabled) return; 
+void TrackedBlob::draw(ofRectangle* drawRect, bool showTrails) { 
 	
-	
-	
+    if(!enabled) return; 
 	
 	ofNoFill(); 
 	ofSetLineWidth(1);
 	ofSetColor(colour);
 	
-	
-	
 	ofPushMatrix(); 
-	ofScale(vidwidth, vidheight); 
+ 	ofScale(drawRect->width, drawRect->height); 
 	ofRect(data->boundingRect); 
 	ofPopMatrix(); 
-
+    
     if(showTrails) {
         ofSetColor(255); 
-       
-        trackedPixels.draw(labelCentre.x-pixelCount, labelCentre.y);
+        // TODO - we need to know the vidWidth and height! 
+        trackedPixels.draw( (labelCentre.x *  (float)drawRect->width / (float)cvWidth)-pixelCount, (labelCentre.y * (float)drawRect->height/(float)cvHeight));
     }
  	
 }
 
-void TrackedBlob::updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, float vidScale) { 
+void TrackedBlob::updatePosition(ofxCvBlob * cvBlob, int cvwidth, int cvheight, float vidScale) { 
 	
+    cvWidth = cvwidth; 
+    cvHeight = cvheight;
+    
 	// unitise all values... 
 	pixelPosition.set(cvBlob->centroid);
 	
@@ -112,9 +92,9 @@ void TrackedBlob::updatePosition(ofxCvBlob * cvBlob, int cvWidth, int cvHeight, 
 	data->boundingRect.y/=(float)cvHeight; 
 	data->boundingRect.width/=(float)cvWidth; 
 	data->boundingRect.height/=(float)cvHeight; 
-	pixelPosition*=vidScale;
-    pixelPosition.x+=1; 
-    pixelPosition.y+=1; 
+	//pixelPosition*=vidScale;
+    //pixelPosition.x+=1; 
+    //pixelPosition.y+=1; 
 	
 	lastUpdated = pixelCount;
 	

@@ -28,7 +28,7 @@ class PhoneRenderer {
 	void setup(CommsManager * cm); 
 	
 	void update(); 
-	void draw(); 
+	void draw(ofRectangle* drawRect); 
 	void updatePhonesWithFBO( ofFbo * fbo) ;
 	void addProgram( OutputEffect * program) ; 
 	void changeProgram(int programnum); 

@@ -26,7 +26,7 @@ class StrokeOrPoke : public OutputEffect {
 		notifyTopPokerFlag = false;
 	}	
 	
-	virtual void draw(); 	
+	virtual void draw(ofRectangle* drawRect); 	
 	virtual void start(); 
 	virtual void stop(); 
 	

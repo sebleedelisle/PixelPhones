@@ -24,7 +24,9 @@ class CameraWrapper {
 	virtual int getHeight(){};
 	virtual bool videoSettings(){}; 
 	virtual void close(){}; 
-	
+    
+    int frameNum; 
+   
 	string name; 
 
 

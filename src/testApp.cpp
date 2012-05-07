@@ -8,6 +8,7 @@ void testApp::setup(){
 	
 	guiSetup(); 
 
+    drawRect.set(0, 0, ofGetWidth(), ofGetHeight());
 	
 	phoneTracker.setupCamera(640,480);
 	gui.control("warp").setSize(phoneTracker.vidWidth/phoneTracker.vidScale, phoneTracker.vidHeight/phoneTracker.vidScale);
@@ -22,6 +23,7 @@ void testApp::setup(){
 	
 	ofBackground(0,0,0);
 	toggleBroadcastIDs = false; 
+    calibrating = false; 
 	
 
 	//ofSetVerticalSync(true);
@@ -41,6 +43,19 @@ void testApp::update(){
 			break; 
 		}
 	}
+    
+    if(calibrating!=phoneTracker.calibrating) { 
+        if(calibrating) { 
+            phoneTracker.calibrating = true; 
+            commsManager.startCalibrating(); 
+            //phoneTracker.recording = true; 
+        } else { 
+            phoneTracker.calibrating = false; 
+            commsManager.stopCalibrating(); 
+            //phoneTracker.recording = false; 
+        } 
+        
+    }
 	
 	//bit nasty - we pass through a boolean if we're currently broadcasting ids
 	vector <FoundPhone *> foundPhones = phoneTracker.update(commsManager.broadcastingIDs);
@@ -58,17 +73,22 @@ void testApp::update(){
 	// if we have so many phones that we need more bits, 
 	// let's change the number!
 	//cout << pow(2.0f, (float)numBits) << "\n";
-	numBits = numBitsMin; 
+    if(!calibrating) { 
+        numBits = numBitsMin; 
 	
-	while (pow(2.0f, (float)numBits) <= commsManager.TCP.getLastID()) { 
-		numBits++;
+        while (pow(2.0f, (float)numBits) <= commsManager.TCP.getLastID()) { 
+            numBits++;
 
-	}
-	
-	if(commsManager.numBits!=numBits) { 
-		commsManager.setNumBits(numBits);
-		phoneTracker.numBits = numBits; 
-	}
+        }
+        
+        if(commsManager.numBits!=numBits) { 
+            commsManager.setNumBits(numBits);
+            phoneTracker.numBits = numBits; 
+        }
+    }
+        
+        
+        
 	if( (phoneFrameRate!=commsManager.phoneFrameRate) || 
         (doubleToSingleRatio!=commsManager.doubleToSingleRatio) || 
         (blackTimeOffset!=commsManager.blackTimeOffset)) {
@@ -86,17 +106,47 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	phoneTracker.draw();
-	commsManager.draw(phoneTracker.vidWidth, phoneTracker.vidHeight); 	
-	phoneRenderer.draw(); 
+    float aspect = (float)phoneTracker.vidWidth/phoneTracker.vidHeight; 
+    
+    
+    if(gui.isOn()) {
+        drawRect.x = (ofGetWidth()/2); 
+        drawRect.y = (ofGetHeight()/2); 
+        drawRect.width = 640;
+        drawRect.height = 640/aspect;
+        drawRect.x -= drawRect.width/2; 
+        drawRect.y -= drawRect.height/2; 
+        
+        
+    } else {
+        float screenaspect = (float)ofGetWidth()/(float)ofGetHeight();
+        if(aspect< screenaspect) { 
+            drawRect.set(0,0,ofGetHeight()*aspect, ofGetHeight()); 
+            drawRect.x = (ofGetWidth()-(ofGetHeight()*aspect))/2;
+        } else { 
+             drawRect.set(0,0,ofGetWidth(), ofGetWidth()/aspect); 
+            drawRect.y = (ofGetHeight()-(ofGetWidth()/aspect))/2;
+        }
+    }
+    
+	phoneTracker.draw(&drawRect);
+	commsManager.draw(&drawRect); 	
+	phoneRenderer.draw(&drawRect); 
 	
 	int framerate = ofGetFrameRate();
 	if(framerate<60) { 
 		ofSetColor(255,ofMap(framerate, 30, 60, 0,255, true),0); 
 		ofFill();
 		ofRect(0,0,10,10); 
-				   
 	}
+
+    ofNoFill(); 
+    ofRect(drawRect); 
+    if(phoneTracker.recording) { 
+        ofFill(); 
+        ofSetColor(255,0,0); 
+        ofCircle(ofGetWidth()-20, 20 , 10);
+    }
 		
 	gui.draw(); 
 	
@@ -110,10 +160,13 @@ void testApp::guiSetup() {
 	
 	//gui.addSlider("videoScale", vidScale, 1,4);
 	//gui.addButton("resetVideo", vidReset);
-	gui.addSlider("numBitsMin", numBitsMin, 4, 12);
-	gui.addSlider("numBits", numBits, 4, 12);
+	gui.addSlider("numBitsMin", numBitsMin, 4, 15);
+	gui.addSlider("numBits", numBits, 4, 15);
 	gui.addToggle("updateVideo", phoneTracker.updateVideo);
 	gui.addToggle("updateDiff", phoneTracker.updateDiff);
+    gui.addToggle("Flip X", phoneTracker.flipX).setSize(200,30); 
+	gui.addToggle("Flip Y", phoneTracker.flipY).setSize(200,30); 
+
 	
 	gui.addPage("PhoneTracking");
 	
@@ -129,9 +182,10 @@ void testApp::guiSetup() {
 	//gui.addContent("Camera feed", phoneTracker.cvColour, 220).setNewColumn(true);
 	
 	gui.addToggle("Recording Video", phoneTracker.recording).setSize(200,30); 
+	gui.addToggle("Calibrate", calibrating).setSize(200,30); 
+    gui.addSlider("calibrationCount", commsManager.calibrationCount,0,10000).setSize(200,30); 
+
 		
-	gui.addToggle("Flip X", phoneTracker.flipX).setSize(200,30); 
-	gui.addToggle("Flip Y", phoneTracker.flipY).setSize(200,30); 
 	
 	gui.addSlider("phoneFrameRate", phoneFrameRate, 1, 30).setNewColumn(true).setSize(200,30);
     gui.addSlider("blackToWhiteRatio", doubleToSingleRatio, 2, 6).setSize(200,30); 
@@ -168,10 +222,6 @@ void testApp::guiSetup() {
 }
 
 
-
-
-
-
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 	
@@ -201,9 +251,12 @@ void testApp::keyPressed(int key){
 				phoneTracker.cameraManager.videoSettings(); 
 				break;
 				
-			case 'r': 
-				commsManager.resetPhones(); 
+			case 'R': 
+				phoneTracker.recording = !phoneTracker.recording; 
 				break;
+            case 'r' : 
+                commsManager.resetPhones(); 
+                break;
 //				
 			//default:
 //				ofColor col = ofColor();

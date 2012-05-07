@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,7 @@
 		960D30C01403CFEA0039A296 /* PacmanEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960D30BF1403CFEA0039A296 /* PacmanEffect.cpp */; };
 		960D30FC1403D58F0039A296 /* StripesEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960D30FB1403D58F0039A296 /* StripesEffect.cpp */; };
 		9614C508141A390900AFE637 /* NyanCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9614C507141A390900AFE637 /* NyanCatch.cpp */; };
+		962D68ED155051B300343896 /* CameraVidPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 962D68EB155051B300343896 /* CameraVidPlayer.cpp */; };
 		962F2B091513C4A900AB7C53 /* CameraVidGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 962F2B081513C4A900AB7C53 /* CameraVidGrabber.cpp */; };
 		963B2813152B75F400658F0F /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 963B2811152B75F400658F0F /* ofxMSAInteractiveObject.cpp */; };
 		963B298B152C6EA300658F0F /* OutputEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 963B298A152C6EA300658F0F /* OutputEffect.cpp */; };
@@ -43,6 +44,7 @@
 		9645CC1614050C3700BFBB0C /* IDPulseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9645CC1514050C3700BFBB0C /* IDPulseData.cpp */; };
 		964E1EBA1413BD0F00E9C1F2 /* StrokeOrPoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 964E1EB91413BD0F00E9C1F2 /* StrokeOrPoke.cpp */; };
 		967930DA1512836C00F201F3 /* CameraManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967930D91512836C00F201F3 /* CameraManager.cpp */; };
+		9679CE271548B3AA005E5B7F /* CameraFirewire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9679CE261548B3AA005E5B7F /* CameraFirewire.cpp */; };
 		967DD69D152D005200FA9525 /* OpenCV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967DD69C152D005200FA9525 /* OpenCV.framework */; };
 		968B12F113B5076B0095E89C /* TrackedBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B12ED13B5076B0095E89C /* TrackedBlob.cpp */; };
 		968B133413B508FB0095E89C /* ofxSimpleGuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B131113B508FB0095E89C /* ofxSimpleGuiButton.cpp */; };
@@ -128,6 +130,8 @@
 		9614C506141A390900AFE637 /* NyanCatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NyanCatch.h; sourceTree = "<group>"; };
 		9614C507141A390900AFE637 /* NyanCatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NyanCatch.cpp; sourceTree = "<group>"; };
 		9614C51C141A44D900AFE637 /* NyanCatchPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NyanCatchPhone.h; sourceTree = "<group>"; };
+		962D68EB155051B300343896 /* CameraVidPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraVidPlayer.cpp; sourceTree = "<group>"; };
+		962D68EC155051B300343896 /* CameraVidPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraVidPlayer.h; sourceTree = "<group>"; };
 		962F2AE61513BC9B00AB7C53 /* CameraWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraWrapper.h; sourceTree = "<group>"; };
 		962F2B071513C4A900AB7C53 /* CameraVidGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraVidGrabber.h; sourceTree = "<group>"; };
 		962F2B081513C4A900AB7C53 /* CameraVidGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraVidGrabber.cpp; sourceTree = "<group>"; };
@@ -218,6 +222,8 @@
 		967919321402BA1D00616DA1 /* OutputEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputEffect.h; sourceTree = "<group>"; };
 		967930D81512836C00F201F3 /* CameraManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraManager.h; sourceTree = "<group>"; };
 		967930D91512836C00F201F3 /* CameraManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraManager.cpp; sourceTree = "<group>"; };
+		9679CE261548B3AA005E5B7F /* CameraFirewire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraFirewire.cpp; sourceTree = "<group>"; };
+		9679CE281548B3B8005E5B7F /* CameraFirewire.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraFirewire.h; sourceTree = "<group>"; };
 		967DD69C152D005200FA9525 /* OpenCV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCV.framework; path = /Library/Frameworks/OpenCV.framework; sourceTree = "<absolute>"; };
 		968B12ED13B5076B0095E89C /* TrackedBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackedBlob.cpp; sourceTree = "<group>"; };
 		968B12EF13B5076B0095E89C /* TrackedBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackedBlob.h; sourceTree = "<group>"; };
@@ -331,6 +337,10 @@
 				962F2AE61513BC9B00AB7C53 /* CameraWrapper.h */,
 				962F2B071513C4A900AB7C53 /* CameraVidGrabber.h */,
 				962F2B081513C4A900AB7C53 /* CameraVidGrabber.cpp */,
+				962D68EC155051B300343896 /* CameraVidPlayer.h */,
+				962D68EB155051B300343896 /* CameraVidPlayer.cpp */,
+				9679CE261548B3AA005E5B7F /* CameraFirewire.cpp */,
+				9679CE281548B3B8005E5B7F /* CameraFirewire.h */,
 				967930D81512836C00F201F3 /* CameraManager.h */,
 				967930D91512836C00F201F3 /* CameraManager.cpp */,
 			);
@@ -871,7 +881,7 @@
 				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "PixelPhones" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -989,6 +999,8 @@
 				963B2813152B75F400658F0F /* ofxMSAInteractiveObject.cpp in Sources */,
 				963B298B152C6EA300658F0F /* OutputEffect.cpp in Sources */,
 				96F1AC721543552B008954F0 /* PlasmaEffect.cpp in Sources */,
+				9679CE271548B3AA005E5B7F /* CameraFirewire.cpp in Sources */,
+				962D68ED155051B300343896 /* CameraVidPlayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1027,7 +1039,7 @@
 					"-D__MACOSX_CORE__",
 					"-lpthread",
 				);
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1057,7 +1069,7 @@
 					"-D__MACOSX_CORE__",
 					"-lpthread",
 				);
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -1071,7 +1083,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G4;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1151,6 +1162,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi\"";
@@ -1162,7 +1174,6 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/vs2010\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/win_cb\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/src/lib\"";
-				PREBINDING = NO;
 				PRODUCT_NAME = PixelPhonesDebug;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1177,7 +1188,6 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1257,6 +1267,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10)",
+					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10 = "\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"";
@@ -1268,7 +1279,6 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/vs2010\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/win_cb\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9 = "\"$(SRCROOT)/src/lib\"";
-				PREBINDING = NO;
 				PRODUCT_NAME = PixelPhones;
 				WRAPPER_EXTENSION = app;
 			};

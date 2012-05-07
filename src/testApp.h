@@ -44,6 +44,9 @@ class testApp : public ofBaseApp{
 	int numBitsMin; 
     float doubleToSingleRatio; 
     int blackTimeOffset; 
+    bool calibrating; 
+    
+    ofRectangle drawRect; 
 	
 	ofPoint warpPoints[4];
 

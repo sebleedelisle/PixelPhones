@@ -13,11 +13,14 @@ void CameraVidGrabber::setup(string _name, int width, int height, int framerate)
 	vidGrabber.initGrabber(width, height);
 	vidGrabber.setDesiredFrameRate(framerate); 
 	name = _name; 
-	
+    frameNum = 0; 
+   
 }
 bool CameraVidGrabber::update() {
 	vidGrabber.update(); 
-	return vidGrabber.isFrameNew(); 
+    bool newFrame = vidGrabber.isFrameNew();
+    
+   	return newFrame; 
 	
 }
 

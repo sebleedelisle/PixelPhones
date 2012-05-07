@@ -22,7 +22,7 @@ class CommsManager {
 	
 	void update(); 
 	bool setup(int portNum); 
-	void draw(int vidWidth, int vidHeight);
+	void draw(ofRectangle* drawRect);
 	
 	void sendAllPhones(string msg); 
 	void sendAllPhonesColour(ofColor col); 
@@ -34,6 +34,10 @@ class CommsManager {
 	
 	void resetPhones(); 
 	void updateWarpPoints( ofPoint points[4], int w, int h); 
+    
+    void startCalibrating(); 
+    void stopCalibrating(); 
+    
 	
 	void mousePressed(int x, int y, int button); 
 	void mouseReleased(int x, int y, int button); 
@@ -51,6 +55,9 @@ class CommsManager {
 	int phoneFrameRate; 
     float doubleToSingleRatio; 
     int blackTimeOffset; 
+    bool calibrating; 
+    int calibrationCount; 
+    int calibrationStart; 
     
 	int posBrightness; 
 	ofTrueTypeFont labelFont; 

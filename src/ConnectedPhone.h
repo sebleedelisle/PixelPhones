@@ -59,13 +59,15 @@ class ConnectedPhone  {
     // in the room
     ofPoint warpedPosition; 
 	int ID; 
+    int calibrationID; 
+    // true if the phone is currently flashing. 
+	bool isBroadcasting; 
 	
 	int counter; 
 	
 	int syncStatus; 
 	int latency; 
 	
-	bool broadcastingID; 
 	vector <string> queuedMessages; 
 	vector <string> programMessages; 
 	ofColor currentColour; 

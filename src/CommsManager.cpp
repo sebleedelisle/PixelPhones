@@ -20,7 +20,7 @@ CommsManager::CommsManager() {
 	destPoints[2].set(1, 1, 0);
 	destPoints[3].set(0, 1, 0);
 	
-	
+	calibrating = false; 
 
 }
 
@@ -46,10 +46,12 @@ bool CommsManager::setup(int portnum){
 
 void CommsManager::update(){
 
-	
+
+    // Check for phones that have disconnected and set up 
+    // new phones that connect. 
+    
 	map<int,ofxTCPClient>::iterator it;
-	
-	
+
 	for(it=TCP.TCPConnections.begin(); it!=TCP.TCPConnections.end(); it++){
 		
 		// index number for this connection 
@@ -94,7 +96,9 @@ void CommsManager::update(){
 				phone->setup(websocketclient, id); 
 				phone->sendNumBits(numBits);
 				phone->sendFrameRate(phoneFrameRate, doubleToSingleRatio, blackTimeOffset);
-				phone->unitPosition.set(ofMap(i%10, 0,10,0.2,0.8), ofMap(floor(i/10.0),0,10,0.2,0.8));
+				// use this if you want start positions to be arranged
+                //phone->unitPosition.set(ofMap(i%10, 0,10,0.2,0.8), ofMap(floor(i/10.0),0,10,0.2,0.8));
+                phone->unitPosition.set(0,0); 
 				phone->updateWarpedPosition(warpMatrix);
 				
 				cout << "pos "<< phone->unitPosition <<"\n";
@@ -106,11 +110,13 @@ void CommsManager::update(){
 		}
 	}
 	
+    // this part destroys phones that are no longer connected and updates 
+    // the number of phones that are currently syncing and broadcasting
+    int numBroadcasting = 0; 
+    
 	map<int,ConnectedPhone *>::iterator phoneit=connectedPhones.begin();
-	
 	int numSyncing = 0; 
-
-	while( phoneit!=connectedPhones.end()){
+    while( phoneit!=connectedPhones.end()){
 		
 		ConnectedPhone	* connectedPhone = phoneit->second; 
 		connectedPhone->update(); 
@@ -124,11 +130,13 @@ void CommsManager::update(){
 			//delete connectedPhone;
 		} else {
 			if(connectedPhone->syncStatus == SYNC_IN_PROGRESS) numSyncing++; 
-			phoneit++;
-		}
+            if(connectedPhone->isBroadcasting)  numBroadcasting++; 
+            phoneit++;
+        }
 
 	}
 	
+    // if we're syncing then find new phones to sync
 	if(syncing) { 
 		phoneit=connectedPhones.begin();
 		while(phoneit!=connectedPhones.end() && numSyncing<numConcurrentSyncs) { 
@@ -139,11 +147,35 @@ void CommsManager::update(){
 			phoneit++; 
 		}
 	}
-	
+    
+    
+    if(calibrating) {
+        if((numBroadcasting==0) || (ofGetElapsedTimeMillis() - calibrationStart >8000)) { 
+            
+            phoneit=connectedPhones.begin();
+            while(phoneit!=connectedPhones.end()) { 
+                ConnectedPhone * phone = phoneit->second;
+                
+                phone->calibrationID+=500;
+                phone->sendMsg("i"+ofToString(phone->calibrationID));
+                phone->broadcastID(); 
+                
+                phoneit++; 
+            }
+            
+            calibrationStart = ofGetElapsedTimeMillis();
+            
+            // should check to see if we've finished! 
+            
+        }
+        
+        
+        
+    }
 	
 }
 
-void CommsManager::draw(int vidWidth, int vidHeight) { 
+void CommsManager::draw(ofRectangle* drawRect) { 
 	
 	ofSetHexColor(0xDDDDDD);
 	ofDrawBitmapString("Socket server connect on port: "+ofToString(TCP.getPort()) + " num:"+ofToString(TCP.getNumClients())+" "+ofToString(TCP.TCPConnections.size()), 10, 20);
@@ -185,7 +217,7 @@ void CommsManager::draw(int vidWidth, int vidHeight) {
 	ofEnableBlendMode(OF_BLENDMODE_ADD);
 
 	ofPushMatrix(); 
-	ofTranslate( ofGetWidth()/2 - vidWidth/2,  ofGetHeight()/2 - vidHeight/2 );
+	ofTranslate( drawRect->x, drawRect->y );
 	if(showPositions && (posBrightness>0)) {
 		map<int,ConnectedPhone*>::iterator phoneit;
 		
@@ -195,15 +227,13 @@ void CommsManager::draw(int vidWidth, int vidHeight) {
 			
 			//if(!phone->found) continue; 
 			
-			phone->draw(posBrightness, vidWidth, vidHeight);
+			phone->draw(posBrightness, drawRect->width, drawRect->height);
 			
 		}
 	}	
 	
 	ofPopMatrix(); 
 	ofDisableBlendMode(); 
-	
-	
 	
 	//
 //	for(map<int,ConnectedPhone>::iterator it2=connectedPhones.begin(); it2!=connectedPhones.end(); it2++){
@@ -242,6 +272,45 @@ void CommsManager::stopBroadcastingIDs(ConnectedPhone * exceptThisOne) {
 	}
 	broadcastingIDs = false; 
 }
+
+void CommsManager::startCalibrating() { 
+ 
+    calibrating = true; 
+    calibrationStart = ofGetElapsedTimeMillis(); 
+    
+    int newNumBits = 0; 
+    while ((pow(2.0f, (float)newNumBits) <= calibrationCount) || (pow(2.0f, (float)newNumBits) <= TCP.getLastID()))  { 
+		newNumBits++;
+    }
+    setNumBits(newNumBits); 
+    cout << "numBits : "<< newNumBits << "\n"; 
+    
+    for(map<int, ConnectedPhone*>::iterator it=connectedPhones.begin(); it!=connectedPhones.end(); it++){
+		ConnectedPhone	* connectedPhone = it->second; 
+        connectedPhone->calibrationID = connectedPhone->ID; 
+		
+	}
+
+    sendAllPhones("b1");
+
+    
+}
+
+void CommsManager::stopCalibrating() { 
+    
+    calibrating = false;   
+    
+    for(map<int, ConnectedPhone*>::iterator it=connectedPhones.begin(); it!=connectedPhones.end(); it++){
+        ConnectedPhone * phone = it->second;
+        
+        phone->sendMsg("i"+ofToString(phone->ID));
+        phone->stopBroadcastingID(); 
+    
+    }
+    
+    
+}
+
 
 void CommsManager::sendAllPhones(string msg) { 
 	
@@ -389,7 +458,7 @@ void CommsManager::mousePressed(int x, int y, int button) {
 				broadcastingIDs = true; // ouch!
 			}
 			//phone->found = false; 
-			if(!phone->broadcastingID) phone->broadcastID(); 
+			if(!phone->isBroadcasting) phone->broadcastID(); 
 			
 		} else { 	
 			it++;

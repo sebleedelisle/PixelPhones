@@ -12,13 +12,15 @@
 
 
 CameraManager::CameraManager() { 
-	camera = new CameraVidGrabber(); 
+	//camera = new CameraVidGrabber(); 
+    camera = new CameraFirewire(); 
+    //camera = new CameraVidPlayer(); 
 
 }
 
 void CameraManager::init() { 
 	
-	camera->setup("vidGrabber", 640, 480, 60); 
+	camera->setup("vidPlayer", 640, 480, 60); 
 	
 }
 
