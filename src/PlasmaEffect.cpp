@@ -22,10 +22,10 @@ void PlasmaEffect::update() {
     float w = fbo->getWidth(); 
     float h = fbo->getHeight(); 
     ofColor col; 
-    
+    ofDisableSmoothing(); 
     ofFill(); 
-    for(float x = 0; x<w; x+=4) { 
-        for(float y = 0; y<h; y+=4) { 
+    for(float x = 1; x<w; x+=4) { 
+        for(float y = 1; y<h; y+=4) { 
             
             
             float v = sin(ofDist(x + time*gen1, y, 128.0, 128.0) / gen3)

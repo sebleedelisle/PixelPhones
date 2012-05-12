@@ -58,6 +58,7 @@ void PhoneTracker::setupCamera(int camwidth, int camheight){
 
 	cvVideo.allocate(vidWidth, vidHeight); 
 	cvColour.allocate(cvWidth, cvHeight); 
+	cvPreview.allocate(320,240); 
 	cvGrey.allocate(cvWidth, cvHeight); 
 	cvGreyPrevious.allocate(cvWidth, cvHeight); 
 	cvDiff.allocate(cvWidth, cvHeight); 	
@@ -118,6 +119,7 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 						
 			cvVideo.setFromPixels(vidpix);	
 			cvColour.scaleIntoMe(cvVideo);
+			cvPreview.scaleIntoMe(cvColour); 
 			cvColour.mirror(flipY, flipX);			
 			
             //ofSaveImage(cvVideo.getPixels()), "testimage.png");
@@ -236,8 +238,8 @@ vector <FoundPhone *>  PhoneTracker::update(bool isBroadcasting){
 						
 						if(!tb->enabled) continue; 
 						
-						int cx = (int)(tb->pixelPosition.x * vidScale)+1;
-						int cy = (int)(tb->pixelPosition.y * vidScale)+1;
+						int cx = (int)roundf(tb->pixelPosition.x * vidScale);
+						int cy = (int)roundf(tb->pixelPosition.y * vidScale);
 						
 						// figure out the pixel index of the centre of the blob
 						int index = (flipY ? (vidHeight - cy) : cy) *vidWidth;

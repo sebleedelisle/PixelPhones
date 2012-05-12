@@ -26,6 +26,10 @@ void CameraManager::init() {
 
 
 bool CameraManager::update() { 
+	
+	if(camera->getGain()!=gain) camera->setGain(gain); 
+	if(camera->getShutter()!=shutter) camera->setShutter(shutter); 
+	
 	return camera->update();
 
 

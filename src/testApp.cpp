@@ -11,7 +11,7 @@ void testApp::setup(){
     drawRect.set(0, 0, ofGetWidth(), ofGetHeight());
 	
 	phoneTracker.setupCamera(640,480);
-	gui.control("warp").setSize(phoneTracker.vidWidth/phoneTracker.vidScale, phoneTracker.vidHeight/phoneTracker.vidScale);
+	gui.control("warp").setSize(phoneTracker.cvPreview.getWidth(), phoneTracker.cvPreview.getHeight());
 	
 	if(!commsManager.setup(portNum)) {
 		portNum++;
@@ -166,6 +166,8 @@ void testApp::guiSetup() {
 	gui.addToggle("updateDiff", phoneTracker.updateDiff);
     gui.addToggle("Flip X", phoneTracker.flipX).setSize(200,30); 
 	gui.addToggle("Flip Y", phoneTracker.flipY).setSize(200,30); 
+	gui.addSlider("Gain", phoneTracker.cameraManager.gain, 0, 512).setSize(200,30); 
+	gui.addSlider("Shutter", phoneTracker.cameraManager.shutter, 0, 512).setSize(200,30); 
 
 	
 	gui.addPage("PhoneTracking");
@@ -199,7 +201,7 @@ void testApp::guiSetup() {
 	gui.addSlider("track distance", phoneTracker.trackDistance, 0, 40).setSize(200,30);
 
 	gui.addPage("screenwarp"); 
-	gui.addQuadWarper("warp", phoneTracker.cvColour, warpPoints);
+	gui.addQuadWarper("warp", phoneTracker.cvPreview, warpPoints);
 	gui.addToggle("syncing", commsManager.syncing).setSize(200,30);
 	
 	gui.addPage("PhoneRenderer"); 
@@ -213,11 +215,12 @@ void testApp::guiSetup() {
 
 	phoneRenderer.nyanCatch->gameStartSwitch = false; 
 	phoneRenderer.startProgramSwitch = false; 
+	phoneRenderer.currentProgramIndex = 0; 
 	phoneTracker.recording = false; 
 	
 	gui.show();
     
-    commsManager.updateWarpPoints(warpPoints, phoneTracker.cvColour.getWidth(), phoneTracker.cvColour.getHeight()); 
+    commsManager.updateWarpPoints(warpPoints, phoneTracker.cvPreview.getWidth(), phoneTracker.cvPreview.getHeight()); 
 
 }
 

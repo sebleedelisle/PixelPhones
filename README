@@ -43,9 +43,18 @@ Send program anything :
 Messages /from/ the client program (should probably also send progname, no?)
 "p:catch|012345"
 
+MemoryGame 
+
+code = 'mem'
+
+Client > Server
+press messages : id and then time
+'p:mem|press|0|00000'
 
 
-
+Server > Client : 
+'p:mem|showButtons|000000|00000'
+where numbers are start and stop times
 
 
 

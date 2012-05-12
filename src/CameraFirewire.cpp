@@ -21,8 +21,8 @@ void CameraFirewire::setup(string _name, int width, int height, int framerate){
     camera.setBayerMode(DC1394_COLOR_FILTER_GBRG);
     
     //camera.setFeatureAbs(<#dc1394feature_t feature#>, <#float value#>)tBayerMode(DC1394_COLOR_FILTER_GBRG);
-    camera.setGainRaw(10); 
-    camera.setShutterRaw(130); 
+    //camera.setGainRaw(10); 
+    //camera.setShutterRaw(130); 
       name = _name; 
     frameNum = 0; 
 	
@@ -31,12 +31,12 @@ bool CameraFirewire::update() {
 	if(camera.grabVideo(curFrame)) {
 		curFrame.update();
         
-        cout << camera.getFrameRate() << " " << 
-                camera.getGainRaw() << " " << 
-                camera.getShutterRaw() << " " << 
-                camera.getBrightnessRaw() << " " << 
-                camera.getExposureRaw() << " " << 
-                camera.getGammaRaw() << "\n"; 
+//        cout << camera.getFrameRate() << " " << 
+//                camera.getGainRaw() << " " << 
+//                camera.getShutterRaw() << " " << 
+//                camera.getBrightnessRaw() << " " << 
+//                camera.getExposureRaw() << " " << 
+//                camera.getGammaRaw() << "\n"; 
                 
         return true;
 	}	
@@ -64,6 +64,23 @@ bool CameraFirewire::videoSettings(){
 }
 void CameraFirewire::close() { 
 	
+}
+
+int CameraFirewire::getGain() { 
+	return camera.getGainRaw(); 
+}
+
+void CameraFirewire::setGain(int v) { 
+	camera.setGainRaw(v); 
 	
-	
+	cout << "gain " << camera.getGainRaw() << "\n"; 
+}
+
+int CameraFirewire::getShutter() { 
+	return camera.getShutterRaw(); 
+}
+
+void CameraFirewire::setShutter(int v) { 
+	camera.setShutterRaw(v) ;
+	cout << "shutter " << camera.getShutterRaw()<< "\n";  
 }

@@ -25,8 +25,14 @@ class CameraWrapper {
 	virtual bool videoSettings(){}; 
 	virtual void close(){}; 
     
-    int frameNum; 
-   
+  	virtual void setGain(int value){}; 
+	virtual int getGain(){};
+	virtual void setShutter(int value){}; 
+	virtual int getShutter(){}; 
+	
+	int frameNum; 
+	
+
 	string name; 
 
 

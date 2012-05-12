@@ -341,7 +341,7 @@ void NyanCatch::stop() {
 	cout << "NyanCatch::stop\n";
 	
 	
-	if((OutputEffect::connectedPhones!=NULL) && (!connectedPhones->empty())) {
+	if((connectedPhones!=NULL) && (!connectedPhones->empty())) {
 		map<int,ConnectedPhone * >::iterator phoneit=connectedPhones->begin();
 
 		while( phoneit!=connectedPhones->end()){

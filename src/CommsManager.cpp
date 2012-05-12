@@ -126,7 +126,6 @@ void CommsManager::update(){
 			cout << "disconnecting phone " << phoneit->first <<" " << connectedPhone->ID << "\n";
 
 			connectedPhones.erase(phoneit++);
-			//
 			//delete connectedPhone;
 		} else {
 			if(connectedPhone->syncStatus == SYNC_IN_PROGRESS) numSyncing++; 

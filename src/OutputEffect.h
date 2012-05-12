@@ -13,6 +13,7 @@
 #include "ofMain.h"
 #include "FoundPhone.h"
 #include "ConnectedPhone.h"
+#include "ofxSimpleGuiToo.h"
 
 class OutputEffect { 
 
@@ -28,6 +29,9 @@ class OutputEffect {
 		started = false; 
 	}; 
 	
+	virtual void initGui(ofxSimpleGuiToo * gui) { 
+
+	};
 	
 	bool onlyUseFoundPhones; 
 	ofFbo* fbo;	

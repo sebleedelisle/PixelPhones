@@ -225,7 +225,7 @@ void ConnectedPhone::sendMsg(string msg) {
 	//cout << "queued "<< queuedMessages.empty() << "\n";
 	if((!connectionReady) || (!tcp->isClientConnected(ID)))  //(!webClient->isConnected()))
 		queuedMessages.push_back(msg); 
-	else
+	else if(isConnected())
 		webClient->tcpClient->sendRaw(ofToString((char)0) + msg + ofToString((char)0xff)); 
 
 }

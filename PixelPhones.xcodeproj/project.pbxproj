@@ -13,6 +13,7 @@
 		9614C508141A390900AFE637 /* NyanCatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9614C507141A390900AFE637 /* NyanCatch.cpp */; };
 		962D68ED155051B300343896 /* CameraVidPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 962D68EB155051B300343896 /* CameraVidPlayer.cpp */; };
 		962F2B091513C4A900AB7C53 /* CameraVidGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 962F2B081513C4A900AB7C53 /* CameraVidGrabber.cpp */; };
+		96323FAF1557E4C9005A1116 /* MemoryGame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96323FAD1557E4C9005A1116 /* MemoryGame.cpp */; };
 		963B2813152B75F400658F0F /* ofxMSAInteractiveObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 963B2811152B75F400658F0F /* ofxMSAInteractiveObject.cpp */; };
 		963B298B152C6EA300658F0F /* OutputEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 963B298A152C6EA300658F0F /* OutputEffect.cpp */; };
 		9641EA501512379500B4FFFF /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9641EA471512379500B4FFFF /* libdc1394.a */; };
@@ -135,6 +136,8 @@
 		962F2AE61513BC9B00AB7C53 /* CameraWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraWrapper.h; sourceTree = "<group>"; };
 		962F2B071513C4A900AB7C53 /* CameraVidGrabber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraVidGrabber.h; sourceTree = "<group>"; };
 		962F2B081513C4A900AB7C53 /* CameraVidGrabber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraVidGrabber.cpp; sourceTree = "<group>"; };
+		96323FAD1557E4C9005A1116 /* MemoryGame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryGame.cpp; sourceTree = "<group>"; };
+		96323FAE1557E4C9005A1116 /* MemoryGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryGame.h; sourceTree = "<group>"; };
 		963B273F152B611E00658F0F /* homography.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = homography.h; sourceTree = "<group>"; };
 		963B280F152B75F400658F0F /* install.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = install.xml; sourceTree = "<group>"; };
 		963B2811152B75F400658F0F /* ofxMSAInteractiveObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSAInteractiveObject.cpp; sourceTree = "<group>"; };
@@ -649,6 +652,8 @@
 				963B298A152C6EA300658F0F /* OutputEffect.cpp */,
 				960D30BE1403CFEA0039A296 /* PacmanEffect.h */,
 				960D30BF1403CFEA0039A296 /* PacmanEffect.cpp */,
+				96323FAE1557E4C9005A1116 /* MemoryGame.h */,
+				96323FAD1557E4C9005A1116 /* MemoryGame.cpp */,
 				9614C506141A390900AFE637 /* NyanCatch.h */,
 				9614C507141A390900AFE637 /* NyanCatch.cpp */,
 				9614C51C141A44D900AFE637 /* NyanCatchPhone.h */,
@@ -1001,6 +1006,7 @@
 				96F1AC721543552B008954F0 /* PlasmaEffect.cpp in Sources */,
 				9679CE271548B3AA005E5B7F /* CameraFirewire.cpp in Sources */,
 				962D68ED155051B300343896 /* CameraVidPlayer.cpp in Sources */,
+				96323FAF1557E4C9005A1116 /* MemoryGame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

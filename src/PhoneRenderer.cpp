@@ -23,7 +23,7 @@ PhoneRenderer:: PhoneRenderer() {
 	addProgram(pacmanEffect = new PacmanEffect(w,h)); 
 	addProgram(nyanCatch = new NyanCatch()); 
     addProgram(plasmaEffect = new PlasmaEffect(w,h)); 
-	
+	addProgram(memoryGame = new MemoryGame()); 	
 	
 
 	currentProgramIndex = 0; 
@@ -56,8 +56,7 @@ void PhoneRenderer::update() {
 	if(currentProgram == NULL) return; 
 	currentProgram->onlyUseFoundPhones = onlyUseFoundPhones; 
 	
-	if(startProgramSwitch && !currentProgram->started) {
-			
+	if(startProgramSwitch && !currentProgram->started) {	
 		currentProgram->start(); 
 		startProgramSwitch = true;
 	} else if((!startProgramSwitch) && (currentProgram->started)) { 
@@ -69,11 +68,9 @@ void PhoneRenderer::update() {
 	
 	// = currentProgram->started; 
 	
-	
 	currentProgram->connectedPhones = &(commsManager->connectedPhones);
 	
 	if(!currentProgram->started) return; 
-	
 	
 	int time = ofGetElapsedTimeMillis();
 	int elapsedTime = time - lastUpdateTime ; 
@@ -140,7 +137,7 @@ void PhoneRenderer :: updatePhonesWithFBO( ofFbo * fbo) {
 
 void PhoneRenderer::draw(ofRectangle* drawRect) {
 	
-	if(currentProgram == NULL) return; 
+	if((currentProgram == NULL) || (!currentProgram->started)) return; 
 
 	currentProgram->draw(drawRect); 
 	
@@ -273,7 +270,12 @@ void PhoneRenderer :: initGui(ofxSimpleGuiToo * gui){
 	//gui->addSlider("Poker num", strokeOrPoke->topPokerPos, 0, 20 );
 	//gui->addSlider("Stroker num", strokeOrPoke->topStrokerPos, 0, 20);
 	
+	for(int i=0; i<outputPrograms.size(); i++) { 
+		outputPrograms[i]->initGui(gui); 
 		
+	}
+	
+	
 }
 
 

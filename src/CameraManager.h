@@ -36,6 +36,9 @@ class CameraManager {
 	//ofxLibdc::Camera cameraFirewire; 
 	CameraWrapper* camera; 
 	
+	int gain; 
+	int shutter; 
+	
 	//vector <CameraWrapper> cameras; 
 	
 	

@@ -26,6 +26,13 @@ class CameraFirewire : public CameraWrapper{
 	virtual bool videoSettings(); 
 	virtual void close(); 
     
+	virtual void setGain(int value); 
+	virtual int getGain();
+	virtual void setShutter(int value); 
+	virtual int getShutter(); 
+
+	
+	
     ofxLibdc::Camera camera;	
 	
 	// ofImage is where we store the current frame we grabbed from the Camera 

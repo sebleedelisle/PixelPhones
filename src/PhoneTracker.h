@@ -29,6 +29,8 @@ class PhoneTracker {
 	
 	ofxCvColorImage cvColour; 
 	ofxCvColorImage cvVideo; 
+	// scaled down video image
+	ofxCvColorImage cvPreview; 
     //ofxCvShortImage cvThreshold; 
 	ofxCvGrayscaleImage cvGrey;
 	ofxCvGrayscaleImage cvGreyPrevious; 

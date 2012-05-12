@@ -18,6 +18,7 @@
 #include "ofxSimpleGuiToo.h"
 #include "ParticleWoosh.h"
 #include "PlasmaEffect.h"
+#include "MemoryGame.h"
 
 
 class PhoneRenderer { 
@@ -55,6 +56,7 @@ class PhoneRenderer {
 	NyanCatch * nyanCatch; 
 	ParticleWoosh * particleWoosh; 
     PlasmaEffect * plasmaEffect; 
+    MemoryGame * memoryGame;
 	
 	bool startProgramSwitch;
 	bool onlyUseFoundPhones; 
