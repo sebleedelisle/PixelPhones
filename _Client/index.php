@@ -71,7 +71,7 @@ div {
 		portNum = 11999; 
 	var socket, canvas, c, msgdiv, msgcount = 0, 
 		SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT=window.innerHeight, 
-		ID = -1, css3d = supports3D(), debugMode = true;
+		ID = -1, css3d = supports3D(), debugMode = false;
 
 	// binary transmit vars : 
 	

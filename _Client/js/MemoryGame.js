@@ -76,7 +76,7 @@ function MemoryGame() {
 	}
 	
 	
-	function showButtons() { 
+		this.showButtons = function showButtons() { 
 
 		canvas.width = SCREEN_WIDTH; 
 		canvas.height = SCREEN_HEIGHT; 
@@ -240,6 +240,7 @@ function MemoryGame() {
 			inPlay = false; 
 			showFailImage(); 
 			//failSound.play(); 
+			playSound(4); 
 		}	else if(msg.indexOf('win')>-1) { 
 				
 			inPlay = false; 
@@ -316,16 +317,12 @@ function MemoryGame() {
 	function playSound(id) { 
 		 if(!audioLoaded) { 
 			soundSprite.play(); 
-		//	sounds[0].looping = true; 
-		// 			for(var i = 0; i<4; i++) { 
-		// 				sounds[i].play(); 
-		// 				sounds[i].volume = 0; 
-		// 			}
+
 			audioLoaded = true; 
 			
 			var interval = setInterval(function() { 
 					try{
-						if((currentSound<0) || (soundSprite.currentTime>currentSound+0.5)) {
+						if((currentSound<0) || (soundSprite.currentTime>currentSound+0.1)) {
 							soundSprite.pause();
 							//soundSprite.volume = 0; 
 							//soundSprite.play(); 
@@ -334,14 +331,15 @@ function MemoryGame() {
 					} catch(e) { 
 						//?
 					}
-				}, 10); 		
+				}, 100); 		
 					
 		} else {
 	
 			try { 
-				//soundSprite.pause();
+				soundSprite.pause();
 				soundSprite.currentTime = id; 
-				if(currentSound==-1) soundSprite.play(); 
+
+				soundSprite.play(); 
 				currentSound = id; 
 			} catch(e) { 
 				// ? 
