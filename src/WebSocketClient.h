@@ -1,39 +1,35 @@
-/*
- *  WebSocketClient.h
- *  SocketServer
- *
- *  Created by Seb Lee-Delisle on 08/06/2011.
- *  Copyright 2011 seb.ly. All rights reserved.
- *
- */
 
 #pragma once
 
+#include "ofxTCPClient.h"
 #include "ofMain.h"
 #include "md5.h"
-#include "ofxNetwork.h"
 
-class WebSocketClient { 
-	
-	public : 
-	WebSocketClient();
-	void setup(int id, ofxTCPClient * client); 
-	void update(); 
-	
-	string procClientHeader(string header, int port);
-	long getKeyValue(string str);
-	bool isConnected(); 
-	//void longToByteArray(long value); 
-	
-	void trim(string* s);
-	ofxTCPClient * tcpClient;
-	
-	bool handShaked;
-	int portNum; 
-
-	string receiveString;
-	
-	
+class WebSocketClient : public ofxTCPClient {
 
 
-}; 
+	public:
+
+		WebSocketClient();
+		virtual bool setup(int _index, bool blocking);
+
+		virtual bool send(string message);
+		virtual void setMessageDelimiter(string delim){
+			ofLog(OF_LOG_WARNING, "Attempt to set the message delimiter on a WebSocket - you shouldn't do this :) "); 
+		};
+		virtual string receive();
+	
+		string procClientHeader(string header, int port);
+		long getKeyValue(string str);		
+		void trim(string* s);
+
+	
+	
+		string messagePrefix; 
+		bool handshakeComplete; 
+		int serverPortNum; 
+	
+};
+
+
+

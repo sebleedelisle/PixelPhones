@@ -64,13 +64,14 @@
 		968B134113B508FB0095E89C /* ofxSimpleGuiToo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B132F13B508FB0095E89C /* ofxSimpleGuiToo.cpp */; };
 		968B134213B508FB0095E89C /* ofxSimpleGuiValueControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B133113B508FB0095E89C /* ofxSimpleGuiValueControl.cpp */; };
 		968B149813B6C9B90095E89C /* FoundPhone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B149713B6C9B90095E89C /* FoundPhone.cpp */; };
+		9693590815616EF800F1E0A0 /* WebSocketClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9693590415616EF800F1E0A0 /* WebSocketClient.cpp */; };
+		9693590915616EF800F1E0A0 /* WebSocketServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9693590615616EF800F1E0A0 /* WebSocketServer.cpp */; };
 		9693E9C5141EEA15004C5ED9 /* ParticleWoosh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9693E9C4141EEA15004C5ED9 /* ParticleWoosh.cpp */; };
 		96B28BE71510E30E00C28A1E /* TrackedBlobData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96B28BE61510E30E00C28A1E /* TrackedBlobData.cpp */; };
 		96EBD1EE13ED6AB9003F5F48 /* PhoneTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD1ED13ED6AB9003F5F48 /* PhoneTracker.cpp */; };
 		96EBD2EB13ED9672003F5F48 /* CommsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E313ED9672003F5F48 /* CommsManager.cpp */; };
 		96EBD2EC13ED9672003F5F48 /* ConnectedPhone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E513ED9672003F5F48 /* ConnectedPhone.cpp */; };
 		96EBD2ED13ED9672003F5F48 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E713ED9672003F5F48 /* md5.c */; };
-		96EBD2EE13ED9672003F5F48 /* WebSocketClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96EBD2E913ED9672003F5F48 /* WebSocketClient.cpp */; };
 		96F1AC721543552B008954F0 /* PlasmaEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96F1AC711543552B008954F0 /* PlasmaEffect.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -267,6 +268,10 @@
 		968B133213B508FB0095E89C /* ofxSimpleGuiValueControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSimpleGuiValueControl.h; sourceTree = "<group>"; };
 		968B149613B6C9B90095E89C /* FoundPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundPhone.h; sourceTree = "<group>"; };
 		968B149713B6C9B90095E89C /* FoundPhone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FoundPhone.cpp; sourceTree = "<group>"; };
+		9693590415616EF800F1E0A0 /* WebSocketClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketClient.cpp; sourceTree = "<group>"; };
+		9693590515616EF800F1E0A0 /* WebSocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketClient.h; sourceTree = "<group>"; };
+		9693590615616EF800F1E0A0 /* WebSocketServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketServer.cpp; sourceTree = "<group>"; };
+		9693590715616EF800F1E0A0 /* WebSocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketServer.h; sourceTree = "<group>"; };
 		9693E9C3141EEA15004C5ED9 /* ParticleWoosh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleWoosh.h; sourceTree = "<group>"; };
 		9693E9C4141EEA15004C5ED9 /* ParticleWoosh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleWoosh.cpp; sourceTree = "<group>"; };
 		96B07F3B1407F21700F48FD7 /* RainbowEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RainbowEffect.h; sourceTree = "<group>"; };
@@ -280,8 +285,6 @@
 		96EBD2E613ED9672003F5F48 /* ConnectedPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectedPhone.h; sourceTree = "<group>"; };
 		96EBD2E713ED9672003F5F48 /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
 		96EBD2E813ED9672003F5F48 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
-		96EBD2E913ED9672003F5F48 /* WebSocketClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketClient.cpp; sourceTree = "<group>"; };
-		96EBD2EA13ED9672003F5F48 /* WebSocketClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketClient.h; sourceTree = "<group>"; };
 		96F1AC711543552B008954F0 /* PlasmaEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlasmaEffect.cpp; sourceTree = "<group>"; };
 		96F1AC731543553E008954F0 /* PlasmaEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlasmaEffect.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
@@ -727,10 +730,12 @@
 		96EBD2EF13ED9676003F5F48 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				9693590415616EF800F1E0A0 /* WebSocketClient.cpp */,
+				9693590515616EF800F1E0A0 /* WebSocketClient.h */,
+				9693590615616EF800F1E0A0 /* WebSocketServer.cpp */,
+				9693590715616EF800F1E0A0 /* WebSocketServer.h */,
 				96EBD2E713ED9672003F5F48 /* md5.c */,
 				96EBD2E813ED9672003F5F48 /* md5.h */,
-				96EBD2E913ED9672003F5F48 /* WebSocketClient.cpp */,
-				96EBD2EA13ED9672003F5F48 /* WebSocketClient.h */,
 				96EBD2E413ED9672003F5F48 /* CommsManager.h */,
 				96EBD2E313ED9672003F5F48 /* CommsManager.cpp */,
 				96EBD2E513ED9672003F5F48 /* ConnectedPhone.cpp */,
@@ -987,7 +992,6 @@
 				96EBD2EB13ED9672003F5F48 /* CommsManager.cpp in Sources */,
 				96EBD2EC13ED9672003F5F48 /* ConnectedPhone.cpp in Sources */,
 				96EBD2ED13ED9672003F5F48 /* md5.c in Sources */,
-				96EBD2EE13ED9672003F5F48 /* WebSocketClient.cpp in Sources */,
 				960D2FDF1403B13F0039A296 /* PhoneRenderer.cpp in Sources */,
 				960D30C01403CFEA0039A296 /* PacmanEffect.cpp in Sources */,
 				960D30FC1403D58F0039A296 /* StripesEffect.cpp in Sources */,
@@ -1007,6 +1011,8 @@
 				9679CE271548B3AA005E5B7F /* CameraFirewire.cpp in Sources */,
 				962D68ED155051B300343896 /* CameraVidPlayer.cpp in Sources */,
 				96323FAF1557E4C9005A1116 /* MemoryGame.cpp in Sources */,
+				9693590815616EF800F1E0A0 /* WebSocketClient.cpp in Sources */,
+				9693590915616EF800F1E0A0 /* WebSocketServer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

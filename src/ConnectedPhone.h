@@ -7,7 +7,7 @@
  *
  */
 #pragma once
-#include "WebSocketClient.h"
+#include "WebSocketServer.h"
 #include "ofMain.h"
 #include <string.h>
 #include <ctime>
@@ -20,7 +20,7 @@ class ConnectedPhone  {
 	
 	public : 
 	ConnectedPhone(ofFbo * labelFbo);
-	void setup(WebSocketClient * webclient, int id);
+	void setup(int id);
 	void update(); 
 	void draw(int brightness, int vidWidth, int vidHeight); 
 	
@@ -45,14 +45,15 @@ class ConnectedPhone  {
 	ofVec2f dragOffset; 
 	
 	
-	ofxTCPServer * tcp; 
+	WebSocketServer * tcp; 
 	
 	void reset(int id); // test for trying different ids
-	
-	WebSocketClient * webClient;
-	
+
 	bool found; 
+	
 	bool connectionReady; 
+	
+	
 	// the unit position of the phone relative to the camera view
 	ofPoint unitPosition;
 	// the unit position after it's been warped to fix the perspective 

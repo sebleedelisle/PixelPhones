@@ -12,8 +12,8 @@
 
 
 CameraManager::CameraManager() { 
-	//camera = new CameraVidGrabber(); 
-    camera = new CameraFirewire(); 
+	camera = new CameraVidGrabber(); 
+    //camera = new CameraFirewire(); 
     //camera = new CameraVidPlayer(); 
 
 }

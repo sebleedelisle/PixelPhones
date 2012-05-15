@@ -10,8 +10,8 @@
 #pragma once 
 
 #include "ofMain.h"
-#include "ofxNetwork.h"
 #include "WebSocketClient.h"
+#include "WebSocketServer.h"
 #include "ConnectedPhone.h"
 #include "FoundPhone.h"
 
@@ -43,7 +43,8 @@ class CommsManager {
 	void mouseReleased(int x, int y, int button); 
 
 	
-	ofxTCPServer TCP;
+	WebSocketServer server;
+	
 	map<int, ConnectedPhone *> connectedPhones;
 	vector <ConnectedPhone *>  disconnectedPhones;
 	bool broadcastingIDs; 

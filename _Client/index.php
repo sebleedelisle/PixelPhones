@@ -71,7 +71,7 @@ div {
 		portNum = 11999; 
 	var socket, canvas, c, msgdiv, msgcount = 0, 
 		SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT=window.innerHeight, 
-		ID = -1, css3d = supports3D(), debugMode = false;
+		ID = -1, css3d = supports3D(), debugMode = true;
 
 	// binary transmit vars : 
 	
@@ -166,7 +166,7 @@ div {
 
 					var msgstr = msgs[i]; 
 					
-					log(msgstr);
+					log("msgstring : " + msgstr);
 					if(msgstr.substring(0,1)=='c'){
 					
 						// CHANGE COLOUR MESSAGE : c<hexcolour>|f<fadespeed>|t<changeTime>

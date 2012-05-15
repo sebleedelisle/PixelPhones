@@ -18,10 +18,7 @@ ConnectedPhone::ConnectedPhone(ofFbo * labelfbo) {
 	
 }
 
-void ConnectedPhone::setup(WebSocketClient *webclient, int id) { 
-
-	webClient = webclient; 
-	webClient->tcpClient->setVerbose(true); 
+void ConnectedPhone::setup(int id) { 
 	
 	//TODO : Maybe ID shouldn't be set here? 
 	ID = calibrationID = id; 
@@ -59,75 +56,70 @@ void ConnectedPhone::setup(WebSocketClient *webclient, int id) {
 
 void ConnectedPhone::update() { 
 
-	//bool connectionReady = webClient->connectionReady; 
-	bool handShaked = webClient->handShaked; 
-	// should probably see what we're getting from the phone ? for reconnection and stuff. 
-	webClient->update(); 
+	string receiveString = tcp->receive(ID);
 	
-	if((!handShaked) && (webClient->handShaked)){
-		// just connected! So send messages... 
-	
-		//cout << "CONNECTED!\n" ;
-	
-		//sendColour(ofColor(255,128,0)); 
-
-	} else if(webClient->receiveString.length()>0) {
+	if(receiveString!="") {
+		
+		cout << "received : " << receiveString << "\n";
 		
 		// should really break this up into separate messages... 
+		// actually not sure if we need to do this - messages should be split... 
+		//vector <string> msgs = ofSplitString(receiveString, ofToString((char)0xff));
 		
-		vector <string> msgs = ofSplitString(webClient->receiveString, ofToString((char)0xff));
+		string msg = receiveString; 
 		
-		for(int i=0; i<msgs.size(); i++) {
+		//for(int i=0; i<msgs.size(); i++) {
+		
+		//string msg = msgs[i];
+		//cout << "msg : "<< msg <<"\n";
+		if(!connectionReady) {
 			
-			string msg = msgs[i];
-			//cout << "msg : "<< msg <<"\n";
-			if(!connectionReady) {
+			if(msg.find("ready")!=string::npos) {
+				cout << "connectionReady  "<<ID<<"\n";
+				connectionReady = true; 
+				// TODO SHould actually just strip out up to the 
+				// 0xff; 
+				sendMsg( "i"+ofToString(ID));
+				//sendMsg( "i"+ofToString(53));
+				sendColour(ofColor(0,255,0)); 
+				// if there's a queue of stuff built up, send it
 				
-				if(msg.find("ready")!=string::npos) {
-					cout << "connectionReady  "<<ID<<"\n";
-					connectionReady = true; 
-					// TODO SHould actually just strip out up to the 
-					// 0xff; 
-					sendMsg( "i"+ofToString(ID));
-					//sendMsg( "i"+ofToString(53));
-					sendColour(ofColor(0,255,0)); 
-					// if there's a queue of stuff built up, send it
-					
-					
-					
-				}; 
-			} else {
-				// here's where we parse stuff
-			
-				if(msg.find("t")==1) { 
-					//clock_t now;
-					//now = clock(); 
-					
-					//cout << "time now "	<< getRelativeSystemTime() << " " << getRelativeSystemTime() <<"\n";
-					sendMsg("t"+ofToString(ofGetElapsedTimeMillis())); 
-					
-				} else if (msg.find("p")==1) {
-					// these are program messages! 
-					programMessages.push_back(msg); 
-					
-				} else if(msg.find("sync")!=string::npos) { 
-					//cout << msg << "\n";
-					//cout << "sync " << msg.substr(5, msg.length()) << " " << ofToInt(msg.substr(5, msg.length()) ) << "\n";
-					syncStatus = SYNCED; 
-					latency = ofToInt(msg.substr(5, msg.length()) ); 
-					//cout << "SYNCED! Latency : " << latency << "\n";
-					
-				} else if(msg.find("b0")!=string::npos) { 
-                    isBroadcasting = false; 
-                    cout << "finished broadcasting "<< ID << "\n";
-                    
-                }
 				
+				
+			}; 
+		} else {
+			// here's where we parse stuff
+		
+			if(msg.find("t")==0) { 
+				//clock_t now;
+				//now = clock(); 
+				
+				//cout << "time now "	<< getRelativeSystemTime() << " " << getRelativeSystemTime() <<"\n";
+				cout << "got sync msg, now sending : " << "t"+ofToString(ofGetElapsedTimeMillis()) << "\n"; 
+				
+				sendMsg("t"+ofToString(ofGetElapsedTimeMillis())); 
+				
+			} else if (msg.find("p")==0) {
+				// these are program messages! 
+				programMessages.push_back(msg); 
+				
+			} else if(msg.find("sync")!=string::npos) { 
+				//cout << msg << "\n";
+				//cout << "sync " << msg.substr(5, msg.length()) << " " << ofToInt(msg.substr(5, msg.length()) ) << "\n";
+				syncStatus = SYNCED; 
+				latency = ofToInt(msg.substr(5, msg.length()) ); 
+				//cout << "SYNCED! Latency : " << latency << "\n";
+				
+			} else if(msg.find("b0")!=string::npos) { 
+				isBroadcasting = false; 
+				cout << "finished broadcasting "<< ID << "\n";
 				
 			}
-			// TODO - make sure we're not half way through a message! 
-			webClient->receiveString = ""; 
+			
+			
 		}
+			// TODO - make sure we're not half way through a message! 
+		//}
 		//sendColour(ofColor());
 		
 		if(connectionReady) sendQueue(); 
@@ -223,11 +215,13 @@ void ConnectedPhone::sendNumBits(int numbits) {
 
 void ConnectedPhone::sendMsg(string msg) { 
 	//cout << "queued "<< queuedMessages.empty() << "\n";
-	if((!connectionReady) || (!tcp->isClientConnected(ID)))  //(!webClient->isConnected()))
+	if((!connectionReady) || (!tcp->isClientConnected(ID))) { //(!webClient->isConnected()))
+		cout << "queuing message : " << msg << "\n"; 
 		queuedMessages.push_back(msg); 
-	else if(isConnected())
-		webClient->tcpClient->sendRaw('\0' + msg + '\xFF'); 
-
+	} else if(isConnected()) {
+		cout << "ConnectedPhone::sendMsg "<< msg << "\n"; 
+		tcp->send(ID, msg ); 
+	}
 }
 
 void ConnectedPhone::broadcastID() { 
@@ -253,7 +247,7 @@ void ConnectedPhone::sendQueue() {
 	if(!isConnected()) return; 
 	if(queuedMessages.size()>0)  {
 		for(int i = 0; i<queuedMessages.size(); i++) {
-			webClient->tcpClient->sendRaw(ofToString((char)0) + queuedMessages[i] + ofToString((char)0xff)); 
+			tcp->sendRaw(ID, ofToString((char)0) + queuedMessages[i] + ofToString((char)0xff)); 
 		}
 			
 		queuedMessages.clear(); 
@@ -275,7 +269,7 @@ bool ConnectedPhone::isConnected() {
 }
 
 void ConnectedPhone::close() { 
-	webClient->tcpClient->close(); 
+	tcp->disconnectClient(ID); 
 }
 
 void ConnectedPhone :: reset(int newid) { 

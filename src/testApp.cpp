@@ -13,7 +13,7 @@ void testApp::setup(){
 	phoneTracker.setupCamera(640,480);
 	gui.control("warp").setSize(phoneTracker.cvPreview.getWidth(), phoneTracker.cvPreview.getHeight());
 	
-	if(!commsManager.setup(portNum)) {
+	while(!commsManager.setup(portNum)) {
 		portNum++;
 		if(portNum>12000) portNum = 11995; 
 	}
@@ -76,7 +76,7 @@ void testApp::update(){
     if(!calibrating) { 
         numBits = numBitsMin; 
 	
-        while (pow(2.0f, (float)numBits) <= commsManager.TCP.getLastID()) { 
+        while (pow(2.0f, (float)numBits) <= commsManager.server.getLastID()) { 
             numBits++;
 
         }
@@ -321,7 +321,7 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void testApp::exit() { 
-	if(commsManager.TCP.close()) { 
+	if(commsManager.server.close()) { 
         cout << "server closed\n";
     } else { 
         cout << "server failed to close :( \n";

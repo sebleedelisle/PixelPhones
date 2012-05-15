@@ -33,7 +33,7 @@ bool CommsManager::setup(int portnum){
 	bool connected = false; 
 	
 	portNum = portnum; 
-	connected = TCP.setup(portNum);
+	connected = server.setup(portNum);
 	
 	cout << "SERVER connected : " << (connected?"SUCCESS \n" : "FAILED \n");
 	labelFont.loadFont("Andale Mono.ttf",8, false); 
@@ -50,14 +50,14 @@ void CommsManager::update(){
     // Check for phones that have disconnected and set up 
     // new phones that connect. 
     
-	map<int,ofxTCPClient>::iterator it;
+	map<int,WebSocketClient>::iterator it;
 
-	for(it=TCP.TCPConnections.begin(); it!=TCP.TCPConnections.end(); it++){
+	for(it=server.webSocketClients.begin(); it!=server.webSocketClients.end(); it++){
 		
 		// index number for this connection 
 		int i = it->first; 
 		
-		if((!TCP.isClientSetup(i)) || (TCP.getClientPort(i)==0)) {
+		if((!server.isClientSetup(i)) || (server.getClientPort(i)==0)) {
 			// then it's a fake client! Or something :/ Or actually I 
 			// think it's disconnected
             
@@ -65,8 +65,8 @@ void CommsManager::update(){
             
 			// should probably find relevant connectedPhone and destroy it. 
 			if(phoneit!=connectedPhones.end()) { 
-               // phoneit->second->close();
-                cout << "we have a connectedPhone object for a phone that has been disconnected:" << i <<" \n";
+				// phoneit->second->close();
+				cout << "we have a connectedPhone object for a phone that has been disconnected:" << i <<" \n";
 			}
             
 		} else {
@@ -77,23 +77,23 @@ void CommsManager::update(){
 			
 			if(connectedPhones.find(i)==connectedPhones.end()){
 				
-				ofxTCPClient * client = &it->second; 
+				//WebSocketClient * client = &it->second; 
 				
-				WebSocketClient * websocketclient = new WebSocketClient(); 
-				websocketclient->portNum = portNum;
+				//WebSocketClient * websocketclient = new WebSocketClient(); 
+				//websocketclient->portNum = portNum;
 				
 				//TODO check if this is the best way to distribute ids
 				//websocketclient->setup(i,client); 
 				int id = i;//floorf(ofRandom(0,16));
-				websocketclient->setup(id,client); 
+				//websocketclient->setup(id,client); 
 				
 				// this makes a new one !
 				ConnectedPhone * phone = new ConnectedPhone(&labelFbo); 
 				phone->labelFont = &labelFont; 
 				connectedPhones[i] = phone; 
-				phone->tcp = &TCP; 
+				phone->tcp = &server; 
 				
-				phone->setup(websocketclient, id); 
+				phone->setup(id); 
 				phone->sendNumBits(numBits);
 				phone->sendFrameRate(phoneFrameRate, doubleToSingleRatio, blackTimeOffset);
 				// use this if you want start positions to be arranged
@@ -122,7 +122,7 @@ void CommsManager::update(){
 		connectedPhone->update(); 
 		
 		if(!connectedPhone->isConnected()){
-			TCP.disconnectClient(connectedPhone->ID);
+			server.disconnectClient(connectedPhone->ID);
 			cout << "disconnecting phone " << phoneit->first <<" " << connectedPhone->ID << "\n";
 
 			connectedPhones.erase(phoneit++);
@@ -177,41 +177,12 @@ void CommsManager::update(){
 void CommsManager::draw(ofRectangle* drawRect) { 
 	
 	ofSetHexColor(0xDDDDDD);
-	ofDrawBitmapString("Socket server connect on port: "+ofToString(TCP.getPort()) + " num:"+ofToString(TCP.getNumClients())+" "+ofToString(TCP.TCPConnections.size()), 10, 20);
+	ofDrawBitmapString("Socket server connect on port: "+ofToString(server.getPort()) + " num:"+ofToString(server.getNumClients())+" "+ofToString(server.webSocketClients.size()), 10, 20);
 
 	//for each connected client lets get the data being sent and lets print it to the screen
-	map<int,ofxTCPClient>::iterator it;
+	map<int,WebSocketClient>::iterator it;
 
 	int counter = 0; 
-
-	/*for(it=TCP.TCPConnections.begin(); it!=TCP.TCPConnections.end(); it++){
-		
-		int i = it->first; 
-		//if(!it->second.isConnected()) continue; 
-		
-		//give each client its own color
-		ofSetColor(255 - i*30, 255 - i * 20, 100 + i*40);
-		
-		//calculate where to draw the text
-		int xPos = 15;
-		int yPos = 80 + (12 * counter * 4);
-		
-		//get the ip and port of the client
-		string port = ofToString( TCP.getClientPort(i) );
-		string ip   = TCP.getClientIP(i);
-		string info = "client "+ofToString(i)+" -connected from "+ip+" on port: "+port+" "+ofToString(TCP.getNumReceivedBytes(i)) + (TCP.isClientConnected(i) ? " on" : " off");
-		
-		
-		//draw the info text and the received text bellow it
-		ofDrawBitmapString(info, xPos, yPos);
-		//ofDrawBitmapString(storeText[i], 25, yPos + 20);
-		
-		//if(!TCP.isClientConnected(i)) TCP.disconnectClient(i);
-		//else 
-		
-		counter++; 
-		
-	}*/
 	
 	ofEnableBlendMode(OF_BLENDMODE_ADD);
 
@@ -278,7 +249,7 @@ void CommsManager::startCalibrating() {
     calibrationStart = ofGetElapsedTimeMillis(); 
     
     int newNumBits = 0; 
-    while ((pow(2.0f, (float)newNumBits) <= calibrationCount) || (pow(2.0f, (float)newNumBits) <= TCP.getLastID()))  { 
+    while ((pow(2.0f, (float)newNumBits) <= calibrationCount) || (pow(2.0f, (float)newNumBits) <= server.getLastID()))  { 
 		newNumBits++;
     }
     setNumBits(newNumBits); 
