@@ -23,7 +23,13 @@ void testApp::setup(){
 	
 	ofBackground(0,0,0);
 	toggleBroadcastIDs = false; 
-    calibrating = false; 
+    calibrating = false;
+	
+	
+	//	if(cameraVidPlayer->setup("Video", "../../../TestMovies/TestPyrosCamCropped.mov", 1024, 768, 60)) {
+	//		cameras.push_back(cameraVidPlayer);
+	//	};
+
 	
 
 	//ofSetVerticalSync(true);

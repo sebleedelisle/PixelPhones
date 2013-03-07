@@ -27,7 +27,8 @@ class WebSocketClient : public ofxTCPClient {
 	
 		string messagePrefix; 
 		bool handshakeComplete; 
-		int serverPortNum; 
+		int serverPortNum;
+	bool verbose; 
 	
 };
 

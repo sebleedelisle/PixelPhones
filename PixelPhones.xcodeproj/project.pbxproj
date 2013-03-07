@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12CC728915FE1A0B0070F867 /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12CC728815FE1A0B0070F867 /* opencv.a */; };
 		960D2FDF1403B13F0039A296 /* PhoneRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960D2FDE1403B13F0039A296 /* PhoneRenderer.cpp */; };
 		960D30C01403CFEA0039A296 /* PacmanEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960D30BF1403CFEA0039A296 /* PacmanEffect.cpp */; };
 		960D30FC1403D58F0039A296 /* StripesEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 960D30FB1403D58F0039A296 /* StripesEffect.cpp */; };
@@ -46,7 +47,6 @@
 		964E1EBA1413BD0F00E9C1F2 /* StrokeOrPoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 964E1EB91413BD0F00E9C1F2 /* StrokeOrPoke.cpp */; };
 		967930DA1512836C00F201F3 /* CameraManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967930D91512836C00F201F3 /* CameraManager.cpp */; };
 		9679CE271548B3AA005E5B7F /* CameraFirewire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9679CE261548B3AA005E5B7F /* CameraFirewire.cpp */; };
-		967DD69D152D005200FA9525 /* OpenCV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967DD69C152D005200FA9525 /* OpenCV.framework */; };
 		968B12F113B5076B0095E89C /* TrackedBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B12ED13B5076B0095E89C /* TrackedBlob.cpp */; };
 		968B133413B508FB0095E89C /* ofxSimpleGuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B131113B508FB0095E89C /* ofxSimpleGuiButton.cpp */; };
 		968B133513B508FB0095E89C /* ofxSimpleGuiColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 968B131313B508FB0095E89C /* ofxSimpleGuiColorPicker.cpp */; };
@@ -123,6 +123,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12CC728815FE1A0B0070F867 /* opencv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = opencv.a; path = ../../../addons/ofxOpenCv/libs/opencv/lib/osx/opencv.a; sourceTree = "<group>"; };
 		960D2FDD1403B13F0039A296 /* PhoneRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneRenderer.h; sourceTree = "<group>"; };
 		960D2FDE1403B13F0039A296 /* PhoneRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhoneRenderer.cpp; sourceTree = "<group>"; };
 		960D30BE1403CFEA0039A296 /* PacmanEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacmanEffect.h; sourceTree = "<group>"; };
@@ -315,6 +316,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12CC728915FE1A0B0070F867 /* opencv.a in Frameworks */,
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
 				E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
@@ -330,7 +332,6 @@
 				E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */,
 				E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */,
 				9641EA501512379500B4FFFF /* libdc1394.a in Frameworks */,
-				967DD69D152D005200FA9525 /* OpenCV.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -826,6 +827,7 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				12CC728815FE1A0B0070F867 /* opencv.a */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
@@ -1175,6 +1177,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
+					"\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi\"";
@@ -1280,6 +1283,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10)",
 					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
+					"\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/osx\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../addons/ofxOpenCv/libs/opencv/lib/android/armeabi\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_10 = "\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"";
